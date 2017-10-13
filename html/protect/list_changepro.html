@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Hello</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/header.css" />
+		<script src="../../js/jquery-2.2.4.js"></script>
+		<script src="../../js/common.js"></script>
+		<style>
+/*			.mui-content{
+				overflow:scroll;
+			}*/
+			.mui-checkbox p {
+				font-size: 12px;
+			}
+			.mui-table-view-cell > .mui-slider-right > .mui-btn {
+				padding: 0 10px;
+			}
+			.sign {
+				width: 100%;
+				padding: 10px 10px 10px 10px;
+			}
+			.discrip {
+				width: 50px;
+				height: 50px;
+				border: 1px solid #DDDDDD;
+				margin-bottom: 20px;
+			}
+			.mui-table-view-cell {
+				padding: 11px 5px;
+			}
+			.mui-table-view-cell:after {
+				left: 2px;
+			}
+			.sign:after {
+				position: absolute;
+				right: 0;
+				bottom: 0;
+				left: 2px;
+				height: 1px;
+				content: '';
+				-webkit-transform: scaleY(.5);
+				transform: scaleY(.5);
+				background-color: #c8c7cc;
+			}
+			textarea {
+				margin: 10px 0;
+			}
+			.oa-contact-cell.mui-table .mui-table-cell {
+				padding: 11px 0;
+				vertical-align: middle;
+			}
+			.oa-contact-cell {
+				position: relative;
+				margin: -11px 0;
+			}
+			.oa-contact-avatar {
+				width: 75px;
+			}
+			.oa-contact-avatar img {
+				border-radius: 50%;
+			}
+			.oa-contact-content {
+				width: 100%;
+			}
+			.oa-contact-name {
+				margin-right: 20px;
+			}
+			.oa-contact-name, oa-contact-position {
+				float: left;
+			}
+			.pic {
+				width: 80px;
+				height: 80px;
+				/*border:1px solid black;*/
+				float: left;
+				margin: 10px 0 0 15px;
+			}
+		</style>
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav" id="head">
+			<a class="mui-icon mui-icon-left-nav mui-pull-left" tapmode ="clickChange" onclick="goback()"></a>
+			<h1 class="mui-title">详情</h1>
+		</header>
+		<div class="mui-content">
+			<div id="tabbar" class="mui-control-content mui-active">
+				<p style="margin-top: 10px;margin-left:10px;">
+					向左滑动选择维保类型
+				</p>
+				<ul class="mui-table-view">
+					<li class="mui-table-view-cell" id="swipeChose" style="padding: 0 0 0 5px !important;"></li>
+				</ul>
+				<div id="hideBody">
+					<p style="margin-top: 10px;margin-left:10px;">
+						点击进入签名
+					</p>
+					<ul class="mui-table-view">
+						<div class="sign" style="background-color: white;">
+							<!--<div class="discrip"></div>-->
+							<div style="width: 48%;display: inline-block;text-align: center">
+								<button onclick="selfSign()" id="disabl">
+									维保签名
+								</button>
+								<div><img onclick="openBig('sSign')" id="self" src="" style="width: 80px;height: 80px;margin-top:10px;"/>
+								</div>
+							</div>
+							<div style="width: 48%;display: inline-block;text-align: center">
+								<button onclick="otherSign()" id="disabl1">
+									业主签名
+								</button>
+								<div onclick="openBig('oSign')"><img id="other" src="" style="width: 80px;height: 80px;margin-top:10px;"/>
+								</div>
+							</div>
+						</div>
+					</ul>
+					<p style="margin-top: 10px;margin-left:10px;" style="clear: both;">
+						维保描述和维保拍照
+					</p>
+					<ul class="mui-table-view" id="scrollTop">
+						<button onclick="camera()" style="margin-top: 30px;margin-left: 15px;float: left">
+							拍照上传
+						</button>
+						<div class="pic" id="picOneo" onclick="openBig('picOne')"><img id="picOne" src="" style="width: 80px;height: 80px;"/>
+						</div>
+						<div class="pic" id="picOnet" onclick="openBig('picTwo')"><img id="picTwo" src="" style="width: 80px;height: 80px;"/>
+						</div>
+						<div class="" style="margin: 10px 5px;">
+							<textarea id="textareaTex" rows="5" placeholder="维保描述" maxlength="200"></textarea>
+						</div>
+					</ul>
+					<p>
+						提交后无法更改
+					</p>
+					<ul class="mui-table-view">
+						<div style="padding: 4% 4% 4% 4%">
+							<button type="button" class="mui-btn mui-btn-royal" onclick="choseAll()">
+								全选符合
+							</button>
+							<button type="button" class="mui-btn mui-btn-royal mui-pull-right" id='confirmBtn' onclick="confirmBtn()">
+								确认提交
+							</button>
+						</div>
+					</ul>
+					<div id="keyRoom" style="width:100%;height:200px;"></div>
+				</div>
+			</div>
+		</div>
+		<div class="mui-popup mui-popup-in showDailog" style="display: none;">
+				<div class="mui-popup-inner" style="width: 270px;height: 320px;border:1px solid gray;text-align: center">
+					<img id="showPicCont" src="" style="width: 240px;height: auto;"/>
+				</div>
+				<div class="mui-popup-buttons">
+					<span class="mui-popup-button" onclick="closeImg()">关闭</span>
+				</div>
+		</div>
+		<div class="mui-popup-backdrop mui-active showChange" style="display: none;"></div>
+		<script type="text/html" id="default">
+			{{each lists as value i}}
+			<li class="mui-table-view-cell" data-id="{{value.id}}">
+				<div class="mui-slider-right mui-disabled show">
+					<a class="mui-btn mui-btn-grey mui-icon notSure" style="font-size: 14px;">无此项</a>
+					<a class="mui-btn mui-btn-yellow mui-icon sure" style="font-size: 14px;">符合</a>
+					<a class="mui-btn mui-btn-red mui-icon yesSure" style="font-size: 14px;">整改后符合</a>
+				</div>
+			<div class="mui-slider-handle">
+			<div class="mui-table-cell">
+			<span style="word-break:break-all;">{{value.name}}</span>
+			<p>{{value.describe}}</p>
+			</div>
+			</div>
+			</li>
+			{{/each}}
+		</script>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../script/api.js"></script>
+		<script src="../../js/template.js" type="text/javascript" charset="utf-8"></script>
+		
+		<script>
+			var sure;
+			//var data;
+			//var address;
+			var selfAddress;
+			var mainSingleId;
+		var deviceId;
+		var proType;
+		var user;	
+		var dt_name;		
+			apiready = function() {
+			
+			deviceId=api['pageParam']['deviceId'];
+			proType=api['pageParam']['type'];
+			dt_name=api['pageParam']['dt_name'];
+			user=$api.getStorage("userInfo");
+			api.showProgress({
+			    style: 'default',
+			    animationType: 'fade',
+			    title: '努力加载中...',
+			    text: '先喝杯茶...',
+			    modal: true
+			});	
+			$('#keyRoom').css("display","none");
+			//console.log(deviceId+proType+user+dt_name);			
+			
+				jingwei();
+				//data = api['pageParam']['listId'];
+				//address = api['pageParam']['address'];
+				//var key_name=$api.getStorage("username");
+				//var json = $api.getStorage(key_name);
+				//var describe = json.describe;
+				getShopList();
+			}
+//window.alert = function (msg) {
+//$('body').append('<div>' + msg + '</div>')
+//};
+//function fixedWatch(el) {
+//if(document.activeElement.nodeName == 'INPUT'){
+//  el.css('position', 'static');
+//} else {
+//  el.css('position', 'fixed');
+//}
+//}
+
+//setInterval(function () {
+//fixedWatch($('#headerview header'));
+//}, 500);			
+	$("#textareaTex").focus(function() { 
+			//console.log("??????")
+			$('.mui-content').css({"position":"relative","bottom":"200px"}); 
+			$('#keyRoom').css("display","block"); 
+			//$('#mui-content').css("position","fixed"); 
+	}); 
+	$("#textareaTex").blur(function() { 
+			$('#keyRoom').css("display","none"); 
+			$('.mui-content').css({"position":"relative","bottom":"0"});   
+			//console.log("??????1")
+	});		
+		//从网络地址获取数据
+		function getShopList() {
+//		var ceshi={"result":1,"lists":[{"id":127,"describe":"清洁，磨损量不超过制造单位要求","name":"制动衬"},{"id":128,"describe":"工作正常","name":"位置脉冲发生器"},{"id":129,"describe":"清洁，无烧蚀","name":"选层器动静触点"},{"id":130,"describe":"清洁，无严重油腻，张力均匀","name":"曳引轮槽、曳引钢丝绳"},{"id":131,"describe":"清洁，无严重油腻","name":"限速器轮槽、限速器钢丝绳"},{"id":132,"describe":"清洁，磨损量不超过制造单位要求","name":"靴衬、滚轮"},{"id":133,"describe":"工作正常","name":"验证轿门关闭的电气安全装置"},{"id":134,"describe":"按照制造单位要求进行清洁、调整","name":"层门、轿门系统中传动钢丝绳、链条、胶带"},{"id":135,"describe":"磨损量不超过制造单位要求","name":"层门门导靴"},{"id":136,"describe":"工作正常，功能有效","name":"消防开关"},{"id":137,"describe":"电气安全装置功能有效，油量适宜，柱塞无锈蚀","name":"耗能缓冲器"},{"id":138,"describe":"工作正常","name":"限速器张紧轮装置和电气安全装置"},{"id":139,"describe":"按照制造单位要求适时更换，保证油质符合要求","name":"减速机润滑油"}]}
+//		sure=ceshi.lists;
+//		textGet(ceshi);
+//		api.hideProgress();
+		var linkenSever=$api.getStorage("linkenSever");
+			api.ajax({
+				url : "http://"+linkenSever+"/LinKenApp/WeiboApp",
+				method : 'post',
+				charset : "utf-8",
+				data : {
+					values:{
+						name:user,
+						type:proType,
+						device_id:deviceId,
+						dt_name:dt_name
+					}
+				},
+				dataType : "json",
+				timeout : 1000,
+			}, function(ret, err) {
+			//console.log(JSON.stringify(ret)+"2222");
+				if(ret){
+					if (ret.result=='1') {
+						api.hideProgress();
+						//调用数据模板
+						mainSingleId=ret.mainSingleId;
+						sure=ret.lists;
+						textGet(ret);
+					}else{
+						api.hideProgress();
+						api.toast({
+	                    	msg:"没有数据"
+                    	});
+					}
+				}else {
+					api.hideProgress();
+					alert("服务器连接失败,请重试");
+					//goback();
+					setTimeout("goback()",1000)
+
+				}
+			});
+		}			
+			//把数据填入模板
+			function textGet(data) {
+				//console.log("??"+data);
+				var list = document.getElementById("swipeChose");
+				var content = template("default", data);
+				list.innerHTML = content;
+				//gotoDetail();
+				document.getElementById("hideBody").style.display = "block";
+			}
+
+			var picOne = '';
+			var picTwo = '';
+			var textArea;
+			var sSign = '';
+			var oSign = '';
+			function camera() {
+				if (picOne == '' || picTwo == '') {
+					openPic();
+				} else {
+					api.toast({
+						msg : '只能上传两张图片'
+					});
+				}
+			}
+
+			function openPic() {
+				api.getPicture({
+					sourceType : 'camera',
+					encodingType : 'jpg',
+					mediaValue : 'pic',
+					destinationType : 'base64',
+					allowEdit : true,
+					quality : 99,
+					targetWidth : 320,
+					targetHeight : 480,
+					saveToPhotoAlbum : false
+				}, function(ret, err) {
+					if (ret) {
+						if (picOne == '') {
+							document.getElementById('picOneo').style.border = 'none';
+							//$api.byId('picOne').style.border = none;
+							$api.byId('picOne').src = ret.base64Data;
+							picOne = ret.base64Data;
+						} else {
+							document.getElementById('picOnet').style.border = 'none';
+							//$api.byId('picTwo').style.border = none;
+							$api.byId('picTwo').src = ret.base64Data;
+							picTwo = ret.base64Data;
+						}
+						//alert(JSON.stringify(ret));
+					} else {
+						//alert(JSON.stringify(err));
+					}
+				});
+			}
+
+			//自己的签名
+			function sSignFc(data) {
+			//console.log(data);
+				var self_sign = document.getElementById("self");
+				self_sign.src = data;
+				sSign=data;
+				document.getElementById("disabl").disabled=true; 
+			}
+
+			//户主签名
+			function oSignFc(data) {
+				var self_sign = document.getElementById("other");
+				self_sign.src = data;
+				oSign=data;
+				document.getElementById("disabl1").disabled=true; 
+			}
+			//打开窗口
+			function selfSign() {
+				api.openWin({
+						name : 'sign',
+						url : 'sign/sign.html',
+						pageParam : {},
+						bounces : false,
+						opaque : false,
+						bgColor : 'rgba(255,255,255,0)',
+						vScrollBarEnabled : false,
+						hScrollBarEnabled : true,
+						slidBackEnabled : false,
+					});
+			}
+			//查看大图
+function openBig(thisPic){
+	var pic=document.getElementById(thisPic.id);
+	if(sSign!=""&&thisPic=='sSign'){
+		//console.log(pic.src);
+		openSeePic(sSign);
+	}
+	if(picOne!=""&&thisPic=='picOne'){
+		openSeePic(picOne);
+	}
+	if(picTwo!=""&&thisPic=='picTwo'){
+		openSeePic(picTwo);
+	}
+	if(oSign!=""&&thisPic=='oSign'){
+		openSeePic(sSign);
+	}
+	
+}
+function openSeePic(img){
+		document.getElementById("showPicCont").src=img;
+		$api.css($api.dom(".showDailog"),'display:block');
+		$api.css($api.dom(".showChange"),'display:block');
+}
+function closeImg(){
+		$api.css($api.dom(".showDailog"),'display:none');
+		$api.css($api.dom(".showChange"),'display:none');
+}
+			function otherSign() {
+				api.openWin({
+					name : 'sign1',
+					url : 'sign/sign1.html',
+					pageParam : {},
+					bounces : false,
+					opaque : false,
+					bgColor : 'rgba(255,255,255,0)',
+					vScrollBarEnabled : false,
+					hScrollBarEnabled : true,
+					slidBackEnabled : false,
+				});
+			}
+
+			//存储更改后的数据的数组
+			var obj = {};
+			var saveOut = {};
+			var saveInfo = [];
+			var ifo = [];
+			mui('#swipeChose').on('tap', '.notSure', function(event) {
+				elem = this.parentNode.parentNode;
+				elem.style.color = "#c7c7cc";
+				mui.swipeoutClose(elem);
+				bufuhe = this.parentElement.parentElement.getAttribute("data-id");
+				var sure = 3;
+				var dis = $(this).parent().next().children().children('span').text();
+				info(bufuhe, sure, dis);
+			});
+			mui('#swipeChose').on('tap', '.yesSure', function(event) {
+				var elem = this.parentNode.parentNode;
+				elem.style.color = "#dd524d";
+				mui.swipeoutClose(elem);
+				baofuhe = this.parentElement.parentElement.getAttribute("data-id");
+				var sure = 2;
+				var dis = $(this).parent().next().children().children('span').text();
+				info(baofuhe, sure, dis);
+			});
+			mui('#swipeChose').on('tap', '.sure', function(event) {
+				var elem = this.parentNode.parentNode;
+				elem.style.color = "#f0ad4e";
+				mui.swipeoutClose(elem);
+				shop = this.parentElement.parentElement.getAttribute("data-id");
+				var sure = 1;
+				var dis = $(this).parent().next().children().children('span').text();
+				info(shop, sure, dis);
+			});
+			//判断提交
+			function confirmBtn() {
+				var des = sure;
+				//var name = data;
+				var time = CurentTime();
+				textArea = document.getElementById('textareaTex').value;
+				saveOut["info"] = saveInfo;
+				saveOut["mainSingleId"] = mainSingleId;
+				//saveOut["address"] = address;
+				saveOut["picOne"] = picOne;
+				saveOut["picTwo"] = picTwo;
+				saveOut["mainSingleId"] = mainSingleId;
+				saveOut["textArea"] = textArea;
+				saveOut["sSign"] = sSign;
+				saveOut["oSign"] = oSign;
+				saveOut["time"] = time;
+				//saveOut["selfAddress"] = selfAddress;
+				ifo.push(saveOut);
+				obj["describe"] = ifo;
+				
+				var connectionType = api.connectionType;
+				if (connectionType == 'wifi' || connectionType == '3g' || connectionType == '4g' || connectionType == '2g') {
+					if(des.length == saveOut["info"].length){
+						//console.log("ssssssssssssssssssssssssss"+JSON.stringify(obj))
+						//replace(name);
+						//send();
+						submitPro(obj);
+					}else{
+						alert('还有未选项目！');
+					}
+				} else{
+					alert("提交失败,请查看网络连接状态");
+				}
+			}
+			//定位
+			function jingwei(){
+				var bMap = api.require('bMap');
+				bMap.getLocation({
+				    accuracy: '100m',
+				    autoStop: true,
+				    filter: 1
+				}, function(ret, err) {
+				    if (ret.status) {
+				    var lon = ret.lon;
+				    var lat = ret.lat;
+				   	 	positionJW(lon,lat);
+				        //alert(JSON.stringify(ret));
+				    } else {
+				        //alert(err.code);
+				    }
+				});
+			}
+			//定位
+			function positionJW(lon,lat){
+				var map = api.require('bMap');
+				map.getNameFromCoords({
+				    lon: lon,
+				    lat: lat
+				}, function(ret, err) {
+				    if (ret.status) {
+				    	selfAddress = ret.address;
+				    	//var posit = ret.province+ret.city+ret.district+ret.streetName+ret.streetNumber;
+				    }
+				});
+			}
+			//提交维保数据
+			function submitPro(obj) {
+				//var token = $api.getStorage("token");
+				//var serverAddress = $api.getStorage("serverAddress");
+				var lists=JSON.stringify(obj);
+				var linkenSever=$api.getStorage("linkenSever");
+				api.ajax({
+					url : "http://"+linkenSever+"/LinKenApp/ReceviceWeiboApp",
+					method : 'post',
+					charset : "utf-8",
+					data : {
+						values:{
+							send:lists
+						}
+					},
+					dataType : "json",
+					timeout : 1000,
+				}, function(ret, err) {
+					console.log(JSON.stringify(ret));
+					if (ret.result == '1') {
+						console.log("success");
+						//send();
+						//$api.rmStorage('myPro');
+						api.toast({
+							msg : '提交维保数据成功！'
+						});
+						goback();
+					} else {
+						api.toast({
+							msg : '提交失败！'
+						});
+					}
+				});
+			}
+
+			//提交维保的时间
+			function CurentTime() {
+				var now = new Date();
+				var year = now.getFullYear();
+				//年
+				var month = now.getMonth() + 1;
+				//月
+				var day = now.getDate();
+				//日
+				var hh = now.getHours();
+				//时
+				var mm = now.getMinutes();
+				//分
+				var clock = year + "-";
+				if (month < 10)
+					clock += "0";
+				clock += month + "-";
+				if (day < 10)
+					clock += "0";
+				clock += day + " ";
+				if (hh < 10)
+					clock += "0";
+				clock += hh + ":";
+				if (mm < 10)
+					clock += '0';
+				clock += mm;
+				return (clock);
+			}
+
+			//更新删除后的数组
+			function replace(index) {
+				//获取存储的上一页的列表，进行删除后并重新储存
+				var oldJson = $api.getStorage('listPro');
+				console.log("8888"+JSON.stringify(oldJson));
+				var lists = oldJson.lists;
+				var newList = {};
+				//console.log(JSON.stringify(lists)+'start');
+				var describe = oldJson.describe;
+				for ( i = 0; i < lists.length; i++) {
+					if (index == lists[i].id) {
+						lists.splice(i, 1);
+						describe.splice(i, 1);
+					}
+				}
+				newList["lists"] = lists;
+				newList["describe"] = describe;
+				//console.log(JSON.stringify(newList)+'success');
+				$api.setStorage('listPro', newList);
+			}
+
+			//启用上一页de函数
+//			function send() {
+//				api.execScript({
+//					name : 'item_h',
+//					frameName : 'item_b',
+//					script : 'refrenshList();'
+//				});
+//			}
+
+			//保存选项状态
+			function info(shop, sure, dis) {
+				var Info = {
+					"id" : "",
+					"desc" : "",
+					"cont" : ""
+				};
+				for (var j = 0; j < saveInfo.length; ++j) {
+					if (saveInfo[j]["id"] == shop) {
+						saveInfo[j]["desc"] = sure;
+						break;
+					}
+				}
+				if (j == saveInfo.length) {
+					//console.log(shop);
+					Info["id"] = shop;
+					Info["desc"] = sure;
+					Info["cont"] = dis;
+					saveInfo[saveInfo.length] = Info;
+				}
+			}
+				
+			function choseAll(){
+				$('#swipeChose').find('li').css('color','#f0ad4e');
+				var sureAll = sure;
+				//console.log(JSON.stringify(sureAll));
+				
+				for(var i=0;i<sureAll.length;i++){
+					var Info = {
+						"id" : "",
+						"desc" : "",
+						"cont" : ""
+					};
+					Info["id"] = sureAll[i].id;
+					Info["desc"] = 1;
+					Info["cont"] = sureAll[i].describe;
+					saveInfo[i] = Info;
+				}
+				api.toast({
+	                msg:'已全选'
+                });
+				//console.log('aaaaaaaaaaaaaa'+JSON.stringify(saveInfo));	
+			}
+			function goback() {
+				var fun = 'closeDailog()';
+				api.execScript({
+				    name: 'item_h',
+				    frameName:'item_b',
+				    script: fun
+				});
+				api.closeWin();
+			}
+		</script>
+	</body>
+</html>

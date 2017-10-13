@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Hello</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link href="../../css/header.css" rel="stylesheet"/>
+		<script src="../../js/common.js"></script>
+		<script src="../../js/jquery-2.2.4.js"></script>
+		<style>
+			.mui-badge {
+				margin-top: 8px;
+			}
+			.mui-card-header.mui-card-media .mui-media-body {
+				margin-left: 30px;
+			}
+			.mui-card-content {
+				padding-top: 10px;
+			}
+			.mui-media-body div {
+				font-size: 16px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="mui-content">
+			<ul class="mui-table-view" id="list">
+				<!-- <li class="mui-table-view-cell" onclick="openView(this,'see')">
+				</li> -->
+			</ul>
+		</div>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/template.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../script/api.js"></script>
+	</body>
+	<script>
+		var startIndex=0;
+		var pageSize=15;
+		var showMsg="数据加载成功";
+		var flagRefrensh=0;
+		var deviceid;
+		apiready = function() {
+			getShopList();
+			setRefreshHeader();
+			api.showProgress({
+			    style: 'default',
+			    animationType: 'fade',
+			    title: '努力加载中...',
+			    text: '先喝杯茶...',
+			    modal: true
+			});
+			refrensh();
+		}
+		function setRefreshHeader(){
+			api.setRefreshHeaderInfo({
+			    visible: true,
+			    loadingImg: 'widget://image/refresh.png',
+			    bgColor: '#f4f9ff',
+			    textColor: 'rgba(105, 105, 105, 1.0)',
+			    textDown: '下拉刷新...',
+			    textUp: '释放刷新...',
+			    showTime: true
+			}, function(ret, err) {
+				location.reload();
+			    //在这里从服务器加载数据，加载完成后调用api.refreshHeaderLoadDone()方法恢复组件到默认状态
+				api.refreshHeaderLoadDone();
+			});
+		}
+		
+		function getShopList() {
+			var token = $api.getStorage("token");
+			var tokenThis = "Token "+token.replace(/\"/g, "");
+			$.ajax({
+				url : $api.getStorage("homeUrl")+"/api/v1/elevator/list",
+			    headers: {
+			        Authorization:tokenThis
+			    },
+			    data:{
+			    	startIndex:startIndex,
+			    	pageSize:pageSize
+			    },
+			    type: "get",
+			    success: function (data) {
+			    	//console.log(JSON.stringify(data));
+			    	//console.log(data.list.length);
+			    	if(data.list.length!=15){
+			    		showMsg="没有更多了";
+			    	}
+			    	if(flagRefrensh!=0){
+					    api.toast({
+			                msg:showMsg
+		                });
+			    	}			    	
+			    	api.hideProgress();
+					addList(data);
+			    },
+			    error:function(){
+			    	api.hideProgress();
+			    	api.toast({
+	                    msg:'获取失败'
+                    });
+			    }
+			});
+		}
+		
+		function addList(data){
+			var div=document.createElement("div");
+			var list=document.getElementById("list");
+			for(i=0;i<data.list.length;i++){
+				var html= "<li class='mui-table-view-cell' id='"+data.list[i].deviceId+"' onclick='openView(this)'>"
+							+"<a class='mui-navigate-right'>"
+							+data.list[i].elevatorName
+							+"</a>"
+							+"</li>";
+				div.innerHTML+=html;
+				list.appendChild(div);
+				//console.log(data.list[i].elevatorName)			
+			}
+		}
+		function openView(index){
+			//console.log(JSON.stringify(deviceid));
+			api.openWin({
+							name : 'list_body',
+							url : 'list_body.html',
+							pageParam : {
+								deviceId:index.id,
+								dt_name:$("#"+index.id).children("a").text()	
+							},
+							bounces : false,
+							opaque : false,
+							slidBackEnabled:false,
+							bgColor : 'rgba(255,255,255,0)',
+							vScrollBarEnabled : false,
+							hScrollBarEnabled : true,
+						});		
+		}		
+		//返回
+		function goback() {
+			api.closeWin();
+		}
+		
+		function refrensh(){
+			api.addEventListener({
+			    name:'scrolltobottom',
+			    extra:{
+			        threshold:0            //设置距离底部多少距离时触发，默认值为0，数字类型
+			    }
+			},function(ret,err){
+				flagRefrensh=1;
+				startIndex=startIndex+pageSize;
+				getShopList();
+			});		
+		}	
+	</script>
+</html>

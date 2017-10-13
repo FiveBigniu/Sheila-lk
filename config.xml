@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<widget id="A6927267661086" version="0.0.1"> 
+  <name>lk</name>  
+  <description/>  
+  <author email="506459061@qq.com" href="http://www.apicloud.com">FiveBIgniu</author>  
+  <content src="login.html"/>  
+  <preference name="appBackground" value="rgba(0,0,0,0)"/>  
+  <preference name="windowBackground" value="rgba(0,0,0,0)"/>  
+  <preference name="frameBackgroundColor" value="rgba(0,0,0,0)"/>  
+  <preference name="autoLaunch" value="true"/>  
+  <preference name="autoUpdate" value="true"/>  
+  <preference name="smartUpdate" value="true"/>  
+  <preference name="debug" value="false"/>  
+  <preference name="statusBarAppearance" value="true"/>  
+  <preference name="softInputMode" value="pan"/>  
+  <permission name="location"/>  
+  <permission name="internet"/>  
+  <permission name="camera"/>  
+  <access origin="*"/>  
+  <feature name="bMap"> 
+    <param name="android_api_key" value="9PXHm7HwqHvy8QAGlVcSKDoaEYqcexTD"/>  
+    <param name="ios_api_key" value="eDn7KTMWlprneSkMQODI3kzZxebGkTCb"/> 
+  </feature>  
+  <feature name="ajpush"> 
+    <param name="app_key" value="e3197af1c68fafba72e9102a"/>  
+    <param name="channel" value="developer-default"/> 
+  </feature> 
+</widget>

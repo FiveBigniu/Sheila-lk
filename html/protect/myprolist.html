@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Hello</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/own/public.css"/>
+		<link rel="stylesheet" href="../../css/header.css" />
+		<script src="../../js/common.js"></script>
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-icon mui-icon-left-nav mui-pull-left" tapmode ="clickChange" onclick="goback()"></a>
+			<h1 class="mui-title">我的维保</h1>
+		</header>
+		<div class="mui-content">
+			<!--<div id="list" class="showList"></div>-->
+			<ul class="mui-table-view mui-table-view-striped mui-table-view-condensed" id="list">
+		    </ul>
+		</div>
+		<script type="text/html" id="lineList">
+			{{each lists as value i}}
+			<li class="mui-table-view-cell" id="{{value.id}}" onclick="openWindow(this,'myproDis')">
+				 <div class="mui-table">
+				 	<h4></h4>
+			          <a class="mui-navigate-right">
+				          <div class="mui-table-cell mui-col-xs-10">
+				               <h4 class="mui-ellipsis">{{value.dt_name}}</h4>
+				               <span class="mui-h5">{{value.device_id | shopDetail2}}</span>
+				               <h5>{{value.start_time | shopDetail}}</h5>
+				               <h5>{{value.end_time | shopDetail1}}</h5>
+				               <h5 style="color:#3c2a5b">{{value.maintenance_type | shopDetail3}}</h5>
+				          </div>
+					  </a>
+			     </div>
+		     </li>
+			{{/each}}
+		</script>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/template.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../script/api.js"></script>
+	</body>
+	<script>
+		var user;
+		apiready = function() {
+			user=$api.getStorage("userInfo");
+				api.showProgress({
+			    style: 'default',
+				    animationType: 'fade',
+				    title: '努力加载中...',
+				    modal: true
+				});			
+			getMsg();
+			
+			
+		}
+
+		//获取数据
+		function getMsg() {
+		//console.log(user);
+		var linkenSever=$api.getStorage("linkenSever");
+			api.ajax({
+				url : "http://"+linkenSever+"/LinKenApp/MyServiceApp",
+				method : 'post',
+				data : {
+					values:{
+						name:user
+					}
+				},
+				dataType : "json",
+				timeout : 1000,
+			}, function(ret, err) {
+				//console.log(JSON.stringify(ret));
+				if(ret){
+					if (ret.result=='1') {
+							api.hideProgress();
+							
+							textGetLa(ret);
+						}else if(ret.result=="0"){
+							api.hideProgress();
+							api.toast({
+			                    msg:'没有已维保数据',
+			                    duration:1500,
+			                    location:'middle'
+		                    });
+						}
+				} else {
+						api.toast({
+		               		msg:'更新数据失败'
+	                	});
+	                	api.hideProgress();
+					}
+				});
+		}
+		
+		//填入数据
+		function textGetLa(json) {
+			template.helper("shopDetail", function(json) {
+				return "开始时间:" + json;
+			})
+			template.helper("shopDetail1", function(json) {
+				return "结束时间:" + json;
+			})
+			template.helper("shopDetail2", function(json) {
+				return "设备ID:" + json;
+			})
+			template.helper("shopDetail3", function(json) {
+				return "维保类型:" + json;
+			})
+			var shopList = document.getElementById("list");
+			var content = template("lineList", json);
+			shopList.innerHTML = content;
+		}	
+			
+		function openWindow(index, name) {
+			var listID=index.id;
+			//console.log(listID);
+			api.openWin({
+				name : name,
+				url : name + '.html',
+				pageParam : {id:listID},
+				bounces : false,
+				opaque : false,
+				bgColor : 'rgba(255,255,255,0)',
+				vScrollBarEnabled : false,
+				hScrollBarEnabled : true,
+				slidBackEnabled : true,
+			});
+		}
+
+		function goback() {
+			api.closeWin();
+		}
+	</script>
+</html>

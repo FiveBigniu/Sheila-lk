@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>yhyun</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/header.css" />
+		<script src="../../js/jquery-2.2.4.js"></script>
+		<script src="../../js/common.js"></script>
+		<style>
+			.mui-grid-view.mui-grid-9 {
+				background-color: rgba(120, 50, 11, 1);
+			}
+			
+			html,
+			body,
+			.mui-content {
+				height: 100%;
+			}
+			
+			.dailog_div {
+				width: 80%;
+				margin: 0 auto;
+				/*margin-top:20px;*/
+				background-color: white;
+				border-radius: 13px 13px 0 0;
+				border: 1px solid #dadada;
+				text-align: center;
+				padding: 15px;
+			}
+			
+			.mui-popup-button:active {
+				background-color: #9e9e9e;
+			}
+			
+			.dailog_content p {
+				color: black;
+				font-size: 18px;
+				font-family: "微软雅黑";
+			}
+			
+			.mui-numbox [class*=btn-numbox] {
+				font-size: 45px;
+				width: 55px;
+			}
+			
+			.mui-numbox {
+				padding: 0 55px;
+			}
+			
+			.tapModel:active {
+				background-color: #ae99d2 !important;
+			}
+		</style>
+	</head>
+
+	<body style="background-color: white;margin-top: 100px;">
+
+		<!--<div class="mui-content">-->
+		<div class="dailog_div">
+			<h1 class="mui-title" id="groupName" style="display: none;"></h1>
+			<div class="dailog_content">
+				<p>读写状态:<label id="show_state"></label></p>
+				<p>取值范围:<label id="show_min"></label>~<label id="show_max"></label></p>
+				<p>旧值:<label id="show_nodian"></label>(<label id="show_ble"></label>)</p>
+				<div id ="f9Show"><input type="text" id="floorOne" style="width: 50%;"/><input type="text" id="floorTwo" style="width: 50%;"/></div>
+				<div class="mui-numbox" id="f9Hide" data-numbox-min="0" data-numbox-max="9999999" style="width:100%;height: 60px;">
+					<button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
+					<input id="ble_text" class="mui-input-numbox" type="number" value="0" />
+					<button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
+				</div>
+			</div>
+			<h5 style="clear: left;display: none;">整行滑块：<span id='block-range-val'>1</span></h5>
+			<div class="mui-input-row mui-input-range" id="f9Hide1">
+				<input type="range" id='block-range' value="0" min="0" max="0">
+			</div>
+		</div>
+
+		<div class="mui-popup-buttons" style="width:80%;margin: 0 auto;">
+			<span class="mui-popup-button tapModel" onclick="more_time()" style="background-color:#3c2a5b;color: white;height:70px;line-height: 70px;">写入</span>
+			<!--<span class="mui-popup-button mui-popup-button-bold">读取</span>-->
+		</div>
+		<!--</div>-->
+	</body>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../script/api.js"></script>
+	<script>
+		var ble_array = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "FA", "FB", "FC", "FD", "FE", "FF"];
+		var f9_array = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "G", "H", "L", "M", "P", "R", "-", "", "12", "13", "23", "C", "D", "E", "F", "I", "J", "K", "N", "O", "Q", "S", "T", "U", "V", "W", "X", "Y", "Z", "15", "17", "19", "14", "16", "22", "33", "43", "", ""];
+		//f9组表
+		var group = 0;//组
+		var index_ble;//父页面传的 当前第几个 号数
+		var firstFlag = 0;
+		var write_flag = 0;
+		
+		var nowStr = "";
+		apiready = function() {
+			//iframe置前
+			api.bringFrameToFront({
+			    from: 'floatDebug'
+			});	
+			document.getElementById("f9Show").style.display = "none";
+			document.getElementById("groupName").innerHTML = api['pageParam']['groupName'];
+			
+			group = api['pageParam']['group'];
+			
+			index_ble = api['pageParam']['index_ble'];			
+
+		}
+
+		document.getElementById('block-range').addEventListener('input', function() {
+			document.getElementById('ble_text').value = this.value;
+		});
+
+		function fillContentMsg(strStr) {
+		//console.log(strStr+"-----------------------------------------------")
+			nowStr = strStr;
+			var point = parseInt(strStr.substr(22, 1), 16);
+			var context1 = strStr.substr(8, 2) + "" + strStr.substr(10, 2);
+			context1 = parseInt(context1, 16) + "";
+
+			var max = ble_strToNum_enter(strStr.substr(12, 2) + "" + strStr.substr(14, 2), point);
+			var min = ble_strToNum_enter(strStr.substr(16, 2) + "" + strStr.substr(18, 2), point);
+
+			var state = parseInt(strStr.substr(22, 1), 16);
+			if(state == 1) {
+				document.getElementById("show_state").innerText = "只读";
+			} else if(state == 0) {
+				document.getElementById("show_state").innerText = "可写";
+			}
+			if(strStr.slice(4, 6) == "09") {
+				document.getElementById("f9Show").style.display = "block";
+				document.getElementById("f9Hide").style.display = "none";
+				document.getElementById("f9Hide1").style.display = "none";
+				var floor = parseInt(strStr.substr(8, 2), 16) < 50 ? parseInt(strStr.substr(8, 2), 16) : 50;
+				var floor1 = parseInt(strStr.substr(10, 2), 16) < 50 ? parseInt(strStr.substr(10, 2), 16) : 50;
+
+				var context = f9_array[floor] + "" + f9_array[floor1];
+				
+			}else if(strStr.slice(4,6) == "07"){
+				//var contMsg = parseInt(strStr.substr(8, 1), 16);
+				context1 = strStr.substr(10, 2);
+				var a = parseInt(strStr.substr(10, 1));
+				a = "0000"+a.toString(2);
+				var b = parseInt(strStr.substr(11, 1));
+				b = "0000"+b.toString(2);
+				a = a.slice(-4);
+				b = b.slice(-4);
+				var resultA = "";
+				var resultB = "";
+				for(var i = a.length; i > 0; i--) {
+				    resultA += a.charAt(i - 1);
+				}
+				
+				for(var k = b.length; k > 0; k--) {
+				    resultB += b.charAt(k - 1);
+				}				
+				//var context = context1.toString(2);
+				var context = resultB+"/"+resultA;
+				//console.log(strStr.substr(8, 2)+"///"+context+"--------------------------------------------------");
+			}else {
+				var context = ble_strToNum_enter(strStr.substr(8, 2) + "" + strStr.substr(10, 2), point);
+			} 
+			document.getElementById("show_max").innerText = max;
+			document.getElementById("show_min").innerText = min;
+			document.getElementById("show_ble").innerText = context;
+			document.getElementById("show_nodian").innerText = context1;
+
+			document.getElementById("block-range").max = max;
+			document.getElementById("block-range").min = 0;
+
+			if(firstFlag < 2) {
+				document.getElementById("ble_text").value = context1;
+				//document.getElementById("block-range-val").value = context1;
+				firstFlag++;
+			}
+
+		}
+		function more_time(){
+			ble_send();
+			ble_send();
+			ble_send();
+			ble_send();
+			ble_send();
+			ble_send();
+
+		}
+		function ble_strToNum_enter(hexStr, point) {
+			var strNum = hexStr;
+			//strNum = strNum<<4+newary[7];
+			var test = parseInt(strNum, 16) + "";
+			//console.log(typeof test);
+			if(point > 0)
+				test = test.slice(0, -point) + "." + test.slice(-point);
+			//test = test.splice(point, 0, '.');
+			//console.log(point + "小数点" + test + "最大值")
+			return test;
+		}
+
+		function ble_calcSum(str) {
+			var res = 0;
+			for(var i = 0; i < str.length - 2; i += 2) {
+				//debugLog(str.substr(i,2));
+				res ^= parseInt(str.substr(i, 2), 16);
+				//console.log(res);
+			}
+			var s = "00" + res.toString(16);
+			s = s.slice(-2);
+			//var s = res.toString(16);
+			//console.log("len " + str.length + " value" + str.substr(26, 2));
+			//console.log("check : " + str.substr(26, 2) + " src: " + s);
+			return str.substr(26, 2) == s;
+		}
+		
+		//拼接+转十六
+		function valueToString(inputText){
+			var inputTextTo = "000" + inputText.toString(16);
+			inputTextTo = inputTextTo.slice(-4);
+
+			var single = "00" + index_ble.toString(16);
+
+			single = single.slice(-2);
+			return single+""+inputTextTo;		
+		}
+		
+		function notF9Group() {
+			var inputText = parseInt(document.getElementById("ble_text").value);
+			var valueString = valueToString(inputText);
+
+			var str = "f557" + group + valueString;
+			
+			var add = isToOrString(str);
+			father_startInterval();
+			father_sendBle(add);
+		}
+		
+		//f9组 拼接+转十六
+		function f9valueToString(inputText){
+			var inputTextTo = "00" + inputText.toString(16);
+			inputTextTo = inputTextTo.slice(-2);
+
+			return inputTextTo;		
+		}
+		//异或转换
+		function isToOrString(str){
+			var res = 0;
+
+			for(var i = 0; i < str.length; i += 2) {
+				res ^= parseInt(str.substr(i, 2), 16);
+			}
+			var s = "00" + res.toString(16);
+
+			s = s.slice(-2);
+
+			var add = str + s;	
+			return add;	
+		}
+		
+		function isF9Group() {
+			var floor1 = parseInt(document.getElementById("floorOne").value);
+			var floor2 = parseInt(document.getElementById("floorTwo").value);
+			
+			floor1 = f9valueToString(floor1);
+			floor2 = f9valueToString(floor2);
+			
+			var single = "00" + index_ble.toString(16);
+			single = single.slice(-2);	
+					
+			var str = "f557" + group + single + floor1 + floor2;
+			
+			var add = isToOrString(str);
+			father_startInterval();
+			father_sendBle(add);
+		}
+
+		function ble_send() {
+			father_stopInterval();
+			if(nowStr.slice(4, 6) == "09") {
+				isF9Group();
+			} else {
+				notF9Group();
+			}
+		}
+		//刷新浮动窗口数据
+		function father_stopInterval(strStr){
+				var fun = 'stopInterval()';
+				
+				api.execScript({
+				    name:'debug',
+				    script: fun
+				});
+		}
+		//刷新浮动窗口数据
+		function father_startInterval(strStr){
+				var fun = 'startInterval()';
+				
+				api.execScript({
+				    name:'debug',
+				    script: fun
+				});
+		}		
+		function father_sendBle(str) {
+			var fun = 'SendBluetooth("' + str + '")';
+			//console.log(str);
+			api.execScript({
+				name: 'debug',
+				//frameName:'list_changepro',
+				script: fun
+			});
+		}
+
+		function father_bleRefrensh() {
+			var fun = 'close_dailog()';
+			api.execScript({
+				name: 'debug',
+				//frameName:'list_changepro',
+				script: fun
+			});
+		}
+	</script>
+
+</html>

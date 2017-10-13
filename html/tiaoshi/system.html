@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>yhyun</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../fonts/font-awesome.min.css">
+		<link rel="stylesheet" href="../../css/header.css"/>
+		<script src="../../js/vue.min.js"></script>
+		<script src="../../js/jquery-2.2.4.js"></script>
+		<script src="../../js/common.js"></script>		
+	<style>
+		ul{
+			list-style:none;
+			margin:0;
+			padding:0;
+		}
+		ul li{
+			border-radius:10px;
+			height:45px;
+			border:1px solid gray;
+			margin-top:5px;
+			padding:10px 15px;
+			background:white;
+		}
+		li:active{
+			background-color:#bfbfbf;
+		}
+	</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-icon mui-icon-left-nav mui-pull-left" onclick="goback()"></a>
+			<h1 class="mui-title">系统操作</h1>
+		</header>
+		<div class="mui-content">
+			<div id="createList">
+					
+			</div>		
+		</div>	
+	</body>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../script/api.js"></script>
+	<script>
+var myArray = [
+["OP1","用户密码","c9","00","00","00000~99999"],
+["OP3","系统数据初始化","0d","4f","4f",""],
+
+["OP5","系统日期设定","44","00","02","2000/00/00~2099/12/30"],
+
+["OP6","系统时间设定","47","00","02","00:00:00~23:59:59"],
+["OP9","井道自学习","4a","00","00","0~1(OFF/ON)"],
+["OP10","停靠方式","0d","4a","4a","0~3"],
+["OP12","系统密码","c9","01","01","00000~99999"],
+["OP13","系统密码2","c9","02","02","00000~99999"],
+["OP14","限制次数","81","00","00","00000000~99999999"],
+["OP15","限制时间","c5","00","00","00:00:00~23:59:59"],
+["OP16","限制日期","ce","00","00","2000/00/00~2099/12/30"]
+];	
+		apiready = function (){
+			for (i=0;i<myArray.length;i++){
+					var html = "<li onclick='this_ble("+i+")'>" 
+							+ "<span>" + myArray[i][0] + "</span>" + "<span>" +myArray[i][1]+ "</span>" + "</li>";
+					var list = document.getElementById('createList');
+					var div = document.createElement('ul');
+					div.innerHTML += html;
+					list.appendChild(div);
+				}
+		}
+		
+		function this_ble(str){
+			var sendStr=myArray[str];
+			//console.log("open dailog"+sendStr);
+			api.openWin({
+				name : "ble_dailog28",
+				url : 'ble_dailog28.html',
+				pageParam : {
+					arrStr:sendStr
+				},
+				bounces : false,
+				opaque : false,
+				bgColor : 'rgba(255,255,255,1)',
+				vScrollBarEnabled : false,
+				hScrollBarEnabled : true,
+				reload : true,
+			});
+		}
+	</script>	
+</html>

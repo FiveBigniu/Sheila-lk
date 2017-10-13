@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="js/mui.min.js"></script>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link href="css/login.css" rel="stylesheet" />
+		<link href="fonts/font-awesome.min.css" rel="stylesheet"/>
+		<script src="js/jquery-2.2.4.js"></script>
+		<title></title>
+	</head>
+	<body style="width:100%;height:100%;background-color: white;">
+		<div class="login">
+			<div class="font">
+				<img src="images/lkyuan.png" style="width: 70%;height: auto;" />
+			</div>
+			<input class="user" placeholder="用户名" id="user" type="text"/>
+			<input class="password" placeholder="密码" type="password" style="text-align: start;" id="pwd"/>
+			<button class="buttn" type="button" id="login" onclick="login()">
+				登陆
+			</button>
+		</div>
+		<div class="lklogo">
+			<div class="lklogo_wid">
+				<img src="images/lklogo.png" style="width: 20%;height: auto;" />
+			</div>
+		</div>
+		<div id="choseServer">
+			<!--<ul id="domServer">-->
+				<!-- <li onclick="oncheck(this)" tapmode="background">192.168.8.149</li>
+				<li onclick="oncheck(this)" tapmode="background">192.155.1.155</li> -->
+			<!--</ul>-->
+		</div>
+	</body>
+	<script src="script/api.js"></script>
+	<script>
+		
+		var logindata;	
+		apiready = function() {
+				//var homeUrl="http://www.lincoln.tm:8081";
+				var homeUrl="http://60.190.141.178:8081";
+				$api.setStorage("homeUrl",homeUrl);
+				
+				var now = new Date();
+				logindata = now.getTime();
+				
+				var getData=$api.getStorage("logindata");
+				
+				//console.log(getData);
+				
+				if(getData!=undefined){
+					var total = (logindata - getData)/1000;
+					var day = parseInt(total / (24*60*60));
+					//console.log(total / (24*60*60));
+					
+					if(day>7){
+						$api.rmStorage('isFrist');
+						alert("身份已过期，请重新登录");
+					}
+					
+				}
+				var isFri=$api.getStorage("isFrist");
+				var user=$api.getStorage("userInfo");
+				var pwd=$api.getStorage("userPwd");
+				var isToken=$api.getStorage("isToken");
+				
+				if(isFri){
+					if(isToken){
+						document.getElementById("user").value=user;
+						document.getElementById("pwd").value=pwd;
+						api.openWin({
+								name : 'home',
+								url : 'home.html',
+								pageParam : {},
+								bounces : false,
+								opaque : false,
+								slidBackEnabled:false,
+								bgColor : 'rgba(255,255,255,0)',
+								vScrollBarEnabled : false,
+								hScrollBarEnabled : true,
+							});					
+					}else{
+						document.getElementById("user").value=user;
+						document.getElementById("pwd").value=pwd;				
+					}
+
+				}else{
+					document.getElementById("user").value="admin";
+					//document.getElementById("pwd").value="lincolnadmin";
+				}
+				
+				exitApp();
+			}
+
+		//访问链接登录数据
+		function login() {
+			var user = document.getElementById("user").value.trim();
+			var pwd = document.getElementById("pwd").value.trim();
+			if(user==''||pwd==''){
+				alert('不能为空！');
+			}else{
+				loginName(user, pwd);
+			}
+		}
+
+		//登陆请求
+		function loginName(user, pwd) {
+			$api.dom('.buttn').innerText='登陆中...';
+		 	var effitiveTime="3600";
+		 	//console.log(user+pwd+$api.getStorage("homeUrl"));
+			api.ajax({
+				//url : "http://www.lincoln.tm:8081/api/v1/login?userName="+user+"&userPassword="+pwd+"&effitiveTime="+effitiveTime,
+				url : $api.getStorage("homeUrl")+"/api/v1/login?userName="+user+"&userPassword="+pwd+"&effitiveTime="+effitiveTime,
+				method : 'post',
+				charset:"utf-8",
+				dataType : "json",
+				timeout : 10,
+			}, function(ret, err) {
+				//console.log(JSON.stringify(ret)+JSON.stringify(ret));
+				if (ret) {
+					
+					var token = JSON.stringify(ret.token);
+					
+					//$api.setStorage('logindata',now);
+					
+					$api.setStorage('token',token);
+					$api.setStorage('userInfo',user);
+					$api.setStorage('userPwd',pwd);
+					$api.setStorage('isFrist',"frist");	
+					$api.setStorage("isToken","token");
+					
+					$api.setStorage('logindata',logindata);
+					
+					console.log(token);
+					
+					api.openWin({
+							name : 'home',
+							url : 'home.html',
+							pageParam : {},
+							bounces : false,
+							opaque : false,
+							slidBackEnabled:false,
+							bgColor : 'rgba(255,255,255,0)',
+							vScrollBarEnabled : false,
+							hScrollBarEnabled : true,
+						});
+						$api.dom('.buttn').innerText='登陆';
+				}else {
+					alert("登录失败");
+					$api.dom('.buttn').innerText='登陆';
+				}
+			});
+		}
+		
+		//按两次退出app
+		function exitApp() {
+			api.addEventListener({
+				name : 'keyback'
+			}, function(ret, err) {
+				api.toast({
+					msg : '再按一次退出'
+				});
+				var ob = api.addEventListener({
+					name : 'keyback'
+				}, function(ret, err) {
+					api.closeWidget({
+						id:'A6927267661086',
+						name : 'keyback',
+						silent:true
+					});
+				});
+				setTimeout(function() {
+					exitApp();
+				}, 3000);
+			});
+		}
+
+	</script>
+</html>

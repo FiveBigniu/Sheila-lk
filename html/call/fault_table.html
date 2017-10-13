@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Hello</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/header.css" />
+		<script src="../../js/common.js"></script>
+		<script src="../../js/vue.min.js"></script>
+		<script src="../../js/jquery-2.2.4.js"></script>
+		<style>
+			.mui-table h4, .mui-table h5, .mui-table .mui-h5, .mui-table .mui-h6, .mui-table p {
+				margin-top: 0;
+			}
+			.mui-table h4 {
+				line-height: 21px;
+				font-weight: 500;
+			}
+			.mui-table .oa-icon {
+				position: absolute;
+				right: 0;
+				bottom: 0;
+			}
+			.mui-table .oa-icon-star-filled {
+				color: #f14e41;
+			}
+			.mui-col-xs-10 {
+				width: 70%;
+			}
+			.mui-col-xs-2 {
+				width: 30%;
+			}
+			table{
+				width:100%;
+				margin-top:15px;
+			}
+			table th, table td{
+				padding: 5px 5px;
+			}
+			.mui-content{
+				padding:0 10px 15px 10px;
+				background-color:white;
+				
+			}
+			.typeBtn button{
+				margin:0 5px;
+			}
+		</style>
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-icon mui-icon-left-nav mui-pull-left" tapmode ="clickChange" onclick="goback()"></a>
+			<h1 class="mui-title" id="father">故障记录</h1>
+		</header>
+		<div class="mui-content">
+			<table border='1'cellspacing="0" cellpadding="0">
+				<tr>
+					<th>电梯编码</th>
+					<td id="deviceId"></td>
+				</tr>
+				<tr>
+					<th>故障编码</th>
+					<td id="faultId"></td>
+				</tr>
+				<tr>
+					<th>受困人数</th>
+					<td id="trappedCount"></td>
+				</tr>
+				<tr>
+					<th>受伤人数</th>
+					<td id="injuredCount"></td>
+				</tr>
+				<tr>
+					<th>发送时间</th>
+					<td id="sendTime"></td>
+				</tr>
+				<tr>
+					<th>故障时间</th>
+					<td id="faultTime"></td>
+				</tr>				<tr>
+					<th>救援人员姓名</th>
+					<td id="rescuePersonName"></td>
+				</tr>				<tr>
+					<th>救援人员电话</th>
+					<td id="rescuePersonTel"></td>
+				</tr>	
+				</tr>
+					<th>处理状态</th>
+					<td id="status" style="color: red;"></td>
+				</tr>																
+			</table>
+			<p style="margin-top: 15px;">更改状态为：</p>
+			<p class="typeBtn">
+				<button type="button" onclick="dealStatus(0);">未处理</button>
+				<button type="button" onclick="dealStatus(1);">处理中</button>
+				<button type="button" onclick="dealStatus(2);">处理完成</button>
+			</p>
+		</div>
+
+	</body>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../js/template.js"></script>
+	<script src="../../script/api.js"></script>
+	<script>
+		var thisID;
+		var list;
+		//var oldlist;
+		apiready = function() {
+			thisID=api['pageParam']['id'];
+			getShopList();
+			
+		}
+		//从网络地址获取数据
+		function getShopList() {
+			var token = $api.getStorage("token");
+			var tokenThis = "Token " + token.replace(/\"/g, "");
+			$.ajax({
+				url : $api.getStorage("homeUrl")+"/api/v1/elevator/rescueSheet/"+thisID,
+				headers : {
+					Authorization : tokenThis
+				},
+				
+				type : "get",
+				success : function(data) {
+				//console.log(JSON.stringify(data));
+					fullData(data);
+					list=data;
+					//oldlist=data;
+				},
+				error : function() {
+					api.toast({
+						msg : '获取失败'
+					});
+				}
+			});
+		}
+
+		function fullData(json) {
+			if(json.status==0){
+				$("#status").text("未处理");
+			}else if(json.status==1){
+				$("#status").text("处理中");
+			}else{
+				$("#status").text("处理完成");
+			}
+			$("#deviceId").text(json.deviceId);
+			$("#faultId").text(json.faultId);
+			$("#trappedCount").text(json.trappedCount);
+			$("#injuredCount").text(json.injuredCount);
+			$("#sendTime").text(json.sendTime);
+			$("#faultTime").text(json.faultTime);
+			$("#rescuePersonName").text(json.rescuePersonName);
+			$("#rescuePersonTel").text(json.rescuePersonTel);
+			
+			
+		}
+		function dealStatus(type){
+			var token = $api.getStorage("token");
+			var tokenThis = "Token " + token.replace(/\"/g, "");
+			//var str={"id":1,"deviceId":"3301061000028","maintainDepId":0,"rescuedPersonTelephone":"","doorStatus":0,"movingDirection":0,"currentFloor":0,"currentFloorName":"","injuredCount":0,"trappedCount":0,"sendTimeStr":"2016-12-16 08:54:00.0","faultTimeStr":"2015-07-21 09:18:42.0","rescuePersonName":"","rescuePersonTel":"","rescueRecord":"","status":type,"isHumanTrapped":0,"faultTypes":",6"};
+			list.status=type;
+			list.sendTimeStr=list.sendTime;
+			list.faultTimeStr=list.faultTime;
+			list.maintainDepStr=0;
+			delete list.faultId;
+			delete list.maintainDepStr;
+			delete list.companyMaintainName;
+			delete list.sendTime;
+			delete list.faultTime;
+			
+			//console.log(JSON.stringify(list));
+			$.ajax({
+				url : $api.getStorage("homeUrl")+"/api/v1/elevator/rescueSheet/"+thisID,
+				headers : {
+					Authorization : tokenThis
+				},
+				contentType:"application/json;charset=utf-8",
+				data:JSON.stringify(list),
+				type : "put",
+				success : function(data) {
+					//console.log(JSON.stringify(data));
+					alert("修改成功");
+					getShopList();
+				},
+				error : function() {
+					api.toast({
+						msg : '获取失败'
+					});
+				}
+			});			
+		}
+	</script>
+</html>

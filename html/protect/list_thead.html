@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Hello</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../css/header.css" />
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<script src="../../js/common.js"></script>
+		<style>
+			.mui-badge {
+				margin-top: 8px;
+			}
+			.mui-card-header.mui-card-media .mui-media-body {
+				margin-left: 30px;
+			}
+			.mui-card-content {
+				padding-top: 10px;
+			}
+			.mui-media-body div {
+				font-size: 16px;
+			}
+		</style>
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav" id="head">
+			<a class="mui-icon mui-icon-left-nav mui-pull-left" tapmode ="clickChange" onclick="goback()"></a>
+			<h1 class="mui-title">详情</h1>
+		</header>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../script/api.js"></script>
+	</body>
+	<script>
+		// 打开frame
+		var head = $api.byId('head');
+		var headPos = $api.offset(head);
+		
+		var address;
+		var data;
+		apiready = function (){
+			data = api['pageParam']['listId'];
+			address = api['pageParam']['address'];
+			openWindowPro();
+		}
+		//我的维保
+		function myPro() {
+			api.openWin({
+				name : 'list_changepro',
+				url : 'list_changepro.html',
+				pageParam : {
+				},
+				bounces : false,
+				opaque : false,
+				bgColor : 'rgba(255,255,255,0)',
+				vScrollBarEnabled : false,
+				hScrollBarEnabled : true,
+			})
+		}
+		function openWindowPro() {
+			//console.log(data+'headrecive')
+			api.openFrame({
+				name : 'list_changepro',
+				url : 'list_changepro.html',
+				rect : {
+					x : 0,
+					y : headPos.h,
+					w : 'auto',
+					h : api.frameHeight - headPos.h
+				},
+				pageParam : {
+					listId:data,
+					address:address
+				},
+				bounces : false,
+				opaque : false,
+				bgColor : 'rgba(239,239,244,1)',
+				vScrollBarEnabled : true,
+				hScrollBarEnabled : true
+			});
+		}		
+	</script>
+</html>

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Hello</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="css/header.css" />
+		<link rel="stylesheet" href="css/mui.min.css">
+		<!--App自定义的css-->
+		<link rel="stylesheet" href="css/home.css" />
+		
+		<link rel="stylesheet" href="fonts/font-awesome.min.css" />
+		<style>
+			html{
+				font-size:62.5%;
+			}
+			.mui-table-view.mui-grid-view .mui-table-view-cell .mui-media-body{
+				font-size:0.6rem;
+			}
+			.mui-table-view-cell span{
+				font-size:1.6rem !important;
+			}
+			.mui-table-view-cell span {
+				font-size: 30px;
+				color: #999999;
+			}
+			.mui-slider-indicator .mui-indicator{
+				background-color:#3c2a5b;
+			}
+			.mui-bar-nav{
+				box-shadow:none;
+			}
+			
+			@media only screen and (max-height: 520px) {
+				.mui-col-xs-4{
+					width:32.8% !important;
+					}
+				}
+		</style>
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav" id="list">
+			<h1 class="mui-title" style="color: #fff;"><img src="images/logo.png" style="width: 100px;height: auto;"/></h1>
+			<a onclick="openWindow('user','user')" tapmode ="clickChange" class="mui-icon-contact mui-icon mui-pull-right" style="color:white;"></a>
+		</header>
+		<div class="mui-content">
+			<div id="slider" class="mui-slider" >
+				<div class="mui-slider-group mui-slider-loop">
+					<!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+					<div class="mui-slider-item mui-slider-item-duplicate">
+						<a href="#"> <img src="images/banner3.jpg"> </a>
+					</div>
+					<!-- 第一张 -->
+					<div class="mui-slider-item">
+						<a href="#"> <img src="images/banner1.jpg"> </a>
+					</div>
+					<!-- 第二张 -->
+					<div class="mui-slider-item">
+						<a href="#"> <img src="images/banner2.jpg"> </a>
+					</div>
+					<!-- 第三张 -->
+					<div class="mui-slider-item">
+						<a href="#"> <img src="images/banner3.jpg"> </a>
+					</div>
+					<!-- 第四张 -->
+					<!--<div class="mui-slider-item">
+						<a href="#"> <img src="images/yuantiao.jpg"> </a>
+					</div>-->
+					<!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+					<div class="mui-slider-item mui-slider-item-duplicate">
+						<a href="#"> <img src="images/banner1.jpg"> </a>
+					</div>
+				</div>
+				<div class="mui-slider-indicator">
+					<div class="mui-indicator mui-active"></div>
+					<div class="mui-indicator"></div>
+					<div class="mui-indicator"></div>
+				</div>
+			</div>
+			<ul id="list" class="mui-table-view mui-grid-view mui-grid-9">
+				<li class="mui-table-view-cell mui-media mui-col-xs-4">
+					<a onclick="openWindow('protect','item_h')"> <span class="fa fa-wrench" style="color: #3c2a5b;"></span>
+					<div class="mui-media-body">
+						维护保养
+					</div> </a>
+				</li>
+				<li class="mui-table-view-cell mui-media mui-col-xs-4">
+					<a onclick="openWindow('call','list')"> <span class="fa fa-lightbulb-o" style="color: #3c2a5b;"></span>
+					<div class="mui-media-body">
+						接警中心
+					</div> </a>
+				</li>
+				<li class="mui-table-view-cell mui-media mui-col-xs-4">
+					<a onclick="openWindow('control','list_control')"> <span class="fa fa-desktop" style="color: #3c2a5b;"></span>
+					<div class="mui-media-body">
+						电梯监控
+					</div> </a>
+				</li>
+				<li class="mui-table-view-cell mui-media mui-col-xs-4">
+					<a onclick="alert('开发中')"> <span class="fa fa-bell-o" style="color: #3c2a5b;"></span>
+					<div class="mui-media-body">
+						远程呼梯
+					</div> </a>
+				</li>
+				<li class="mui-table-view-cell mui-media mui-col-xs-4">
+					<a onclick="openWindow('tiaoshi','chose_ban')"> <span class="fa fa-shield" style="color: #3c2a5b;"></span>
+					<div class="mui-media-body">
+						电梯调试
+					</div> </a>
+				</li>
+				<!-- <li class="mui-table-view-cell mui-media mui-col-xs-4">
+					<a onclick="openNo()"> <span class="fa fa-book" style="color: #3c2a5b;"></span>
+					<div class="mui-media-body">
+						应急预案
+					</div> </a>
+				</li> -->
+				<!-- <li class="mui-table-view-cell mui-media mui-col-xs-4">
+					<a onclick="openMap('control','list_control')"> <span class="fa fa-map-marker" style="color: #3c2a5b;"></span>
+					<div class="mui-media-body">
+						GIS地图
+					</div> </a>
+				</li> -->
+				<li class="mui-table-view-cell mui-media mui-col-xs-4">
+					<a onclick="openWindow('yearCheck','nj_head')"> <span class="fa fa-exclamation-circle" style="color: #3c2a5b;"></span>
+					<div class="mui-media-body">
+						年检提醒
+					</div> </a>
+				</li>
+				<!-- <li class="mui-table-view-cell mui-media mui-col-xs-4">
+					<a onclick="openNo()"> <span class="fa fa-file-text-o" style="color: #3c2a5b;"></span>
+					<div class="mui-media-body">
+						知识库
+					</div> </a>
+				</li> -->
+			</ul>
+		</div>
+		<div id="allmap" style="display: none;"></div>
+	</body>
+	<script src="js/mui.min.js"></script>
+	<script src="script/api.js"></script>
+	<script src="js/vue.min.js"></script>
+	<script>
+		apiready = function() {
+			//判断系统
+			var systemType = api.systemType;
+			api.setStatusBarStyle({
+				style : 'light'
+			});
+			api.closeWin({
+				name : 'root'
+			});
+			api.closeWin({
+				name : 'login'
+			});
+			exitApp();
+			//submitDle();
+			$api.setStorage("linkenSever","60.190.141.178:8081");
+			//$api.setStorage("linkenSever","192.168.2.123:8098");
+
+		}	
+
+	//定位
+	function positionJW(lon,lat){
+		var map = api.require('bMap');
+		map.getNameFromCoords({
+		    lon: lon,
+		    lat: lat
+		}, function(ret, err) {
+		    if (ret.status) {
+		    	var position = ret.address;
+		    	var posit = ret.province+ret.city+ret.district+ret.streetName+ret.streetNumber;
+		    	//console.log(position);
+		    	//console.log(JSON.stringify(ret));
+		        alert(posit);
+		    }
+		});
+	}
+	
+	(function (doc, win) {
+	  var docEl = doc.documentElement,
+	    resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+	    recalc = function () {
+	      var clientWidth = docEl.clientWidth;
+	      if (!clientWidth) return;
+	      docEl.style.fontSize = 20 * (clientWidth / 320) + 'px';
+	    };
+	 
+	  if (!doc.addEventListener) return;
+	  win.addEventListener(resizeEvt, recalc, false);
+	  doc.addEventListener('DOMContentLoaded', recalc, false);
+	})(document, window);
+
+
+		//按两次退出app
+		function exitApp() {
+			api.addEventListener({
+				name : 'keyback'
+			}, function(ret, err) {
+				api.toast({
+					msg : '再按一次退出'
+				});
+				var ob = api.addEventListener({
+					name : 'keyback'
+				}, function(ret, err) {
+					api.closeWidget({
+						id:'A6927267661086',
+						name : 'keyback',
+						silent:true
+					});
+				});
+				setTimeout(function() {
+					exitApp();
+				}, 3000);
+			});
+		}
+
+		//打开方式
+		function openWindow(name, inname) {
+			api.openWin({
+				name : inname,
+				url : 'html/' + name + '/' + inname + '.html',
+				pageParam : {
+					pageNum:"listsee"
+				},
+				bounces : false,
+				opaque : false,
+				bgColor : 'rgba(255,255,255,1)',
+				vScrollBarEnabled : false,
+				hScrollBarEnabled : true,
+			});
+		}
+		function openMap(name, inname) {
+			api.openWin({
+				name : inname,
+				url : 'html/' + name + '/' + inname + '.html',
+				pageParam : {
+					pageNum:"map"
+				},
+				bounces : false,
+				opaque : false,
+				bgColor : 'rgba(255,255,255,1)',
+				vScrollBarEnabled : false,
+				hScrollBarEnabled : true,
+			});
+		}
+
+		function openPRO(name, inname){
+				api.openWin({
+						name : inname,
+						url : 'html/' + name + '/' + inname + '.html',
+						pageParam : {
+						},
+						bounces : false,
+						opaque : false,
+						bgColor : 'rgba(255,255,255,1)',
+						vScrollBarEnabled : false,
+						hScrollBarEnabled : true,
+						//reload : true,
+					});
+		}
+		function openNo() {
+			api.openWin({
+				name : 'noData',
+				url : 'noData.html',
+				pageParam : {
+				},
+				bounces : false,
+				opaque : false,
+				bgColor : 'rgba(255,255,255,1)',
+				vScrollBarEnabled : false,
+				hScrollBarEnabled : true,
+				//reload : true,
+			});
+		}
+//function checkUpdate() {
+//          var mam = api.require('mam');
+//          mam.checkUpdate(function(ret, err) {
+//              if (ret) {
+//                  var result = ret.result;
+//                  if (result.update == true && result.closed == false) {
+//                      var str = '新版本型号:' + result.version + ';更新提示语:' + result.updateTip + ';下载地址:' + result.source + ';发布时间:' + result.time;
+//                      api.confirm({
+//                          title : '有新的版本,是否下载并安装 ',
+//                          msg : str,
+//                          buttons : ['确定', '取消']
+//                      }, function(ret, err) {
+//                          if (ret.buttonIndex == 1) {
+//                              if (api.systemType == "android") {
+//                                  api.download({
+//                                      url : result.source,
+//                                      report : true
+//                                  }, function(ret, err) {
+//                                      if (ret && 0 == ret.state) {/* 下载进度 */
+//                                          api.toast({
+//                                              msg : "正在下载应用" + ret.percent + "%",
+//                                              duration : 2000
+//                                          });
+//                                      }
+//                                      if (ret && 1 == ret.state) {/* 下载完成 */
+//                                          var savePath = ret.savePath;
+//                                          api.installApp({
+//                                              appUri : savePath
+//                                          });
+//                                      }
+//                                  });
+//                              }
+//                              if (api.systemType == "ios") {
+//                                  api.installApp({
+//                                      appUri : result.source
+//                                  });
+//                              }
+//                          }
+//                      });
+//                  } else {
+//                      api.alert({
+//                          msg : "暂无更新"
+//                      });
+//                  }
+//              } else {
+//                  api.alert({
+//                      msg : err.msg
+//                  });
+//              }
+//          });
+//      }		
+	</script>
+</html>

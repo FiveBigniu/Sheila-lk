@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>yhyun</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<script src="../../js/jquery-2.2.4.js"></script>
+		<link rel="stylesheet" href="../../css/header.css" />
+		<script src="../../js/common.js"></script>
+		<script src="../../js/vue.min.js"></script>
+		<style>
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-icon mui-icon-left-nav mui-pull-left" onclick="goback()" tapmode ="clickChange"></a>
+			<h1 id="title" class="mui-title">远程呼梯</h1>
+		</header>
+		<div class="mui-content">
+		<!-- <ul class="mui-table-view" id="list">
+			<li class="mui-table-view-cell" v-for="todos in todos" id="{{todos.id}}" onclick="callEle();">
+				<a class="">
+					<span style="color: gray;margin-right: 10px;" v-if="todos.isonline!=0"><i class="fa fa-circle"></i></span>
+					<span style="color: green;margin-right: 10px;" v-else><i class="fa fa-circle"></i></span>
+					<span>{{todos.dt_name}}</span> 
+					<span class="pull-right" style="float: right;color:blue;" tapmode ="clickChange">呼梯</span>
+				</a>
+				
+			</li>
+		</ul> -->
+		</div>
+		<!--<script type="text/html" id="shopTmpl">
+			{{each lists as value i}}
+			<li class="mui-table-view-cell" id="{{value.id}}" onclick="openView(this,'see')">
+				<a class="mui-navigate-right">
+					<span style="color: green;margin-right: 10px;"><i class="fa fa-circle"></i></span>
+					<span>{{value.dt_name}}</span> 
+				</a>
+			</li>
+			{{/each}}
+		</script>-->
+	</body>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../js/template.js"></script>
+	<script src="../../script/api.js"></script>
+	<script>
+		apiready = function (){
+			alert("开发中..")
+		}
+		function goback(){
+			api.closeWin();
+		}
+	</script>	
+</html>

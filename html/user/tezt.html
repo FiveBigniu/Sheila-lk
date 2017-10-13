@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+	<style>
+		ul{
+			list-style:none;
+			margin:0;
+			padding:0;
+		}
+		ul li{
+			border-radius:10px;
+			height:40px;
+			border:1px solid gray;
+			margin-top:5px;
+			padding:5px 15px;
+			background:white;
+		}
+	</style>
+</head>
+<body>
+<div id="createList">
+			<button onclick="dianji()">dianwo</button>	
+		</div>	
+</body>
+<script type="text/javascript">
+
+				var now = new Date();
+				var day
+				setTimeout(function(){
+					var now1 = new Date();
+					var s1 = now.getTime(),s2 = now1.getTime();
+				console.log(s1+"time"+s2);
+				
+				var total = (s2 - s1)/1000;
+				
+				day = parseInt(total / (24*60*60));
+				console.log(total / (24*60*60));
+				},5000);
+				
+				
+				
+			
+		 function dianji(){
+			alert(day);
+		}
+</script>
+</html>

@@ -1,0 +1,16 @@
+@media only screen and (min-width: 100px) and (max-width: 321px) {
+.mui-grid-view.mui-grid-9 .mui-table-view-cell{
+	padding: 12vw 5vw 12vw 5vw !important;
+}	
+}
+body,html{
+	height: 100%;
+	background-color: white;
+}
+.mui-grid-view.mui-grid-9{
+	background-color:rgba(255,255,255,1) !important;
+}
+.mui-grid-view.mui-grid-9 .mui-table-view-cell{
+	padding: 14vw 5vw 14vw 5vw;
+	border-top: 1px solid #eee;
+} 

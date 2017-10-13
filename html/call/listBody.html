@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/header.css" />
+		<script src="../../js/common.js"></script>
+		<script src="../../js/vue.min.js"></script>
+		<script src="../../js/jquery-2.2.4.js"></script>
+		<style>
+			.mui-table h4,.mui-table h5,.mui-table .mui-h5,.mui-table .mui-h6,.mui-table p{
+		        margin-top: 0;
+		    }
+		    .mui-table h4{
+		        line-height: 21px;
+		        font-weight: 500;
+		    }
+		
+		    .mui-table .oa-icon{
+		        position: absolute;
+		        right:0;
+		        bottom: 0;
+		    }
+		    .mui-table .oa-icon-star-filled{
+		        color:#f14e41;
+		    }
+			.mui-col-xs-10{
+				width:70%;
+			}
+			.mui-col-xs-2{
+				width:30%;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<ul class="mui-table-view mui-table-view-striped mui-table-view-condensed" id="list">
+		    </ul>
+		</div>
+		<script type="text/html" id="lineList">
+			{{each list as value i}}
+			<li class="mui-table-view-cell" id="{{value.id}}" onclick="openMore(this)">
+				 <div class="mui-table">
+			          <a class="">
+				          <div class="mui-table-cell mui-col-xs-10">
+				               <h4 class="mui-ellipsis">{{value.elevatorName}}</h4>
+				               <span class="mui-h5">{{value.isHumanTrapped | shopDetail}}</span>
+				               <h5>{{value.status | shopDetail1}}</h5>
+				          </div>
+					  </a>
+			     </div>
+		     </li>
+			{{/each}}
+		</script>
+	</body>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../js/template.js"></script>
+	<script src="../../script/api.js"></script>
+	<script>
+		apiready = function(){
+			getShopList();
+			//deviceId=api['pageParam']['deviceId'];
+			//console.log(deviceId);
+		}	
+		//从网络地址获取数据
+		function getShopList() {
+			var token = $api.getStorage("token");
+			var tokenThis = "Token "+token.replace(/\"/g, "");
+			$.ajax({
+				url : $api.getStorage("homeUrl")+"/api/v1/elevator/rescueSheet?beginTime=2014-04-01",
+			    headers: {
+			        Authorization:tokenThis
+			    },
+			    type: "get",
+			    timeout:8000,
+			    success: function (data) {
+			    	//console.log(JSON.stringify(data));
+			    	if(data.list.length==0){
+			    		//textGetLa(dataaa);
+			    		api.toast({
+	                        msg:'没有信息'
+                        });
+			    	}else{
+			    		var dataMsg=data.list;
+			    		for(var i=0;i<dataMsg.length;i++){
+				    		if(dataMsg[i].isHumanTrapped==0){
+				    			dataMsg[i].isHumanTrapped="未困人";
+				    		}else{
+				    			dataMsg[i].isHumanTrapped="困人";
+				    		}
+				    		
+				    		if(dataMsg[i].status==0){
+				    			dataMsg[i].status="未处理";
+				    		}else if(data.list.status==1){
+				    			dataMsg[i].status="处理中";
+				    		}else{
+				    			dataMsg[i].status="处理完成";
+				    		}				    					    			
+			    		}
+			    		
+			    		textGetLa(data);
+			    	}
+			    },
+			    error:function(){
+			    	api.toast({
+	                    msg:'获取失败'
+                    });
+			    }
+			});
+		}	
+		//转换时间戳
+		 function getLocalTime(time) {     
+				var date = new Date(1398250549490);
+				Y = date.getFullYear() + '-';
+				M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+				D = date.getDate() + ' ';
+				h = date.getHours() + ':';
+				m = date.getMinutes() + ':';
+				s = date.getSeconds(); 
+				console.log(Y+M+D+h+m+s);
+   		 }	
+		function textGetLa(json) {
+			template.helper("shopDetail", function(json) {
+				return "是否困人:" + json;
+			})		
+			template.helper("shopDetail1", function(json) {
+				return "处理状态:" + json;
+			})
+
+
+			var shopList = document.getElementById("list");
+			var content = template("lineList", json);
+			shopList.innerHTML = content;
+		}
+		function openMore(index){
+			//console.log(JSON.stringify(deviceid));
+			api.openWin({
+							name : 'fault_table',
+							url : 'fault_table.html',
+							pageParam : {
+								id:index.id
+							},
+							bounces : false,
+							opaque : false,
+							slidBackEnabled:true,
+							bgColor : 'rgba(255,255,255,0)',
+							vScrollBarEnabled : false,
+							hScrollBarEnabled : true,
+						});		
+		}				
+	</script>
+</html>

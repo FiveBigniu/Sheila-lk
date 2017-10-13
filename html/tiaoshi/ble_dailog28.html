@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>yhyun</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/header.css"/>
+		<script src="../../js/jquery-2.2.4.js"></script>
+		<script src="../../js/common.js"></script>
+		<style>
+		.mui-grid-view.mui-grid-9{
+			background-color:rgba(120,50,11,1);
+		}
+		html,
+		body,
+		.mui-content{
+			height:100%;
+		}
+		.dailog_div{
+			width:80%;
+			margin:0 auto;
+			margin-top:20px;
+			background-color:white;
+			border-radius:13px 13px 0 0;
+			border:1px solid #dadada;
+			padding: 15px;
+		}
+		.mui-popup-button:active{
+			background-color:#9e9e9e;
+		}
+		.dailog_content p{
+			color: black;
+			font-size:18px;
+			font-family:"微软雅黑";
+		}
+		#show_text, #show_text1{
+			width:58px !important;
+			height:30px !important;
+			margin-bottom:0 !important;
+		}
+		</style>
+	</head>
+
+	<body style="background-color: gray;">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-icon mui-icon-left-nav mui-pull-left" onclick="goback()" tapmode ="clickChange"></a>
+			<h1 class="mui-title" id="groupName"></h1>
+		</header>
+		<div class="mui-content">
+			<div class="dailog_div">
+				<div class="dailog_content">
+					<p>地址:<input id="show_text" type="text" maxlength="2" value="0"><input id="show_text1" type="text" maxlength="2" value="0"><label id="show_minmax">(<label id="show_min"></label>~<label id="show_max"></label>)</label></p>
+					<p>说明:<label id="show_number"></label><label id="show_danwei"></label></p>
+					<p>旧值:<label id="show_ble"></label></p>
+					<input id="ble_text" type="text" value="0">
+					</div>
+				</div>
+				<div class="mui-popup-buttons" style="width:80%;margin: 0 auto;">
+					<span class="mui-popup-button" onclick="ble_read()">读取</span>
+					<span class="mui-popup-button" onclick="ble_send()">写入</span>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../script/api.js"></script>
+	<script>
+		var data;
+		var arrStr;
+		var firstFlag=0;
+		apiready = function(){
+			arrStr = api["pageParam"]["arrStr"];
+			//console.log(JSON.stringify(arrStr));
+			document.getElementById('groupName').innerHTML=arrStr[0]+arrStr[1];
+			document.getElementById('show_number').innerHTML=arrStr[5];
+			document.getElementById('show_min').innerHTML=arrStr[3];
+			document.getElementById('show_max').innerHTML=arrStr[4];
+			document.getElementById('show_text').value=arrStr[2];
+			document.getElementById('show_text1').value=arrStr[3];
+			data=arrStr[2]+""+arrStr[3];
+			 $('#show_text').attr('disabled',true);
+			if(arrStr[3]==arrStr[4]){
+				 $('#show_text1').attr('disabled',true);
+				 $("#show_minmax").hide();
+			}
+			notify();
+			ble_write();
+		}
+		function notify(){
+		console.log("enter notify");
+			var ble = api.require('hwBluetooth');
+			ble.NotifyBluetooth(function(ret){
+				console.log(JSON.stringify(ret));
+				var reciv = ret.sData;
+				if(reciv!=undefined){
+					//console.log(typeof reciv);
+					var show_reciv = reciv.substr(8,4);
+					//console.log(show_reciv);
+					//console.log(show_reciv+"he"+data);
+					
+					if(show_reciv==data){
+						
+						//var order = reciv.split('').reverse().join('');
+						var order_show = reciv.substr(18,2)+reciv.substr(16,2)+reciv.substr(14,2)+reciv.substr(12,2);
+						//console.log(order+"[][][][][][]"+order_show);
+						order_show=parseInt(order_show,16)
+						document.getElementById('show_ble').innerText=order_show;
+							if(firstFlag < 2){
+								document.getElementById("ble_text").value = order_show;
+								firstFlag++;
+							}
+						
+					}				
+				}
+
+			});
+		}
+		function ble_read(){
+		
+			arrStr[3]=document.getElementById('show_text1').value;
+			console.log(arrStr[3]+"read3333333333333333333");
+		}		
+		function ble_write() {
+			var str = "fe00aa03" +""+ arrStr[2]+ "" + arrStr[3]+"00000000";
+			//console.log("我我我我我我我我我我我我我我我"+str);
+			var res = 0;
+			for (var i = 0; i < str.length; i += 2) {
+				//debugLog(str.substr(i,2));
+				res ^=parseInt(str.substr(i, 2), 16);
+				//debugLog(res);
+			}
+			var s ="00"+res.toString(16);
+			s = s.slice(-2);
+			
+			var add = str + s;
+			console.log("我我我我我我我我我我我我我我我"+add);
+			SendBluetooth(add);
+			setTimeout("ble_write()",500);
+		}		
+		
+		function SendBluetooth(str){
+			var ble = api.require('hwBluetooth');
+			ble.SendBluetooth({
+				sData:str
+			},function(ret){
+				console.log(JSON.stringify(ret));
+			})
+		}
+		
+		//拼接+转十六
+
+		function ble_send(){
+			var	inputText=parseInt(document.getElementById("ble_text").value);
+				
+			var	inputTextTo="0000000"+inputText.toString(16);
+			 	inputTextTo=inputTextTo.slice(-8);
+				inputTextTo=inputTextTo.substr(6,2)+inputTextTo.substr(4,2)+inputTextTo.substr(2,2)+inputTextTo.substr(0,2);
+			
+			var str="fe00aa02"+data+inputTextTo;
+			
+			var res = 0;
+			for (var i = 0; i < str.length; i += 2) {
+				//debugLog(str.substr(i,2));
+				res ^=parseInt(str.substr(i, 2), 16);
+				//debugLog(res);
+			}
+			var s ="00"+res.toString(16);
+			s = s.slice(-2);
+			
+			var add = str + s;
+			console.log(add+"写入的");
+			SendBluetooth(add);
+			//return SendBluetooth(add);
+		}
+		
+		function father_sendBle(str){
+				var fun = 'SendBluetooth("'+str+'")';
+				//console.log(str);
+				api.execScript({
+				    name: 'debug',
+				    //frameName:'list_changepro',
+				    script: fun
+				});
+		}
+		function father_bleRefrensh() {
+			var fun = 'close_dailog()';
+				api.execScript({
+				    name: 'debug',
+				    //frameName:'list_changepro',
+				    script: fun
+				});
+		}		
+		//关闭蓝牙
+		function exitApp() {
+			api.addEventListener({
+				name : 'keyback'
+			}, function(ret, err) {
+				  father_bleRefrensh();
+				  setTimeout("api.closeWin()",500);
+			});
+		}
+
+		function goback() {
+			father_bleRefrensh();
+			setTimeout("api.closeWin()",500);
+		}										
+	</script>
+</html>

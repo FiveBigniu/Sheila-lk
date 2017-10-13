@@ -1,0 +1,88 @@
+ul{ 
+	margin:0;
+	padding:0;
+	list-style:none;
+}
+.login {
+	margin: 14% 0;
+	text-align: center;
+}
+.login input {
+	width: 70%;
+	background-color: rgba(60,42,91,0.1);
+	border-radius: 2px;
+	height: 35px;
+	margin-top: 20px;
+	color: black;
+	outline: hidden;
+}
+.buttn {
+	width: 70%;
+	height: 40px;
+	margin-top: 30px;
+	border-radius: 2px;
+	color: white;
+	background-color: #3c2a5b;
+	font-size: 18px;
+	border: 0;
+}
+.font {
+	width: 70%;
+	margin: 0 auto;
+}
+.user {
+	padding: 0 0 0 15px;
+}
+.link-area {
+	display: block;
+	margin-top: 25px;
+	text-align: center;
+	color: white;
+}
+.link-area a {
+	color: white;
+}
+.name {
+	font-size: 24px;
+	color: white;
+	position: absolute;
+	top: 5%;
+	left: 35%;
+}
+.link-area, .link-area a {
+	color: rgba(255,255,255,0.4);
+}
+.lklogo {
+	width: 100%;
+	position: absolute;
+	bottom: 20px;
+}
+.lklogo_wid {
+	width: 100%;
+	position: relative;
+	margin: 0 auto;
+	text-align: center;
+}
+#choseServer{
+	position: absolute;
+	width:100%;
+	text-align:center;
+	bottom:10px;
+	display:none;
+}
+#choseServer li{
+	height:40px;
+	line-height:40px;
+	color:white;
+	background-color:#aea7b9;
+	margin-top:5px;
+	
+}
+#chosBtn{
+	width:30%;
+	margin-top:20px;
+	height:35px;
+}
+.lgFont{
+	display:none;
+}

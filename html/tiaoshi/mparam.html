@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>yhyun</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../fonts/font-awesome.min.css">
+		<link rel="stylesheet" href="../../css/header.css"/>
+		<script src="../../js/vue.min.js"></script>
+		<script src="../../js/jquery-2.2.4.js"></script>
+		<script src="../../js/common.js"></script>		
+	<style>
+		ul{
+			list-style:none;
+			margin:0;
+			padding:0;
+		}
+		ul li{
+			border-radius:10px;
+			height:45px;
+			border:1px solid gray;
+			margin-top:5px;
+			padding:10px 15px;
+			background:white;
+		}
+		li:active{
+			background-color:#bfbfbf;
+		}
+	</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-icon mui-icon-left-nav mui-pull-left" onclick="goback()"></a>
+			<h1 class="mui-title">数据监控</h1>
+		</header>
+		<div class="mui-content">
+			<div id="createList">
+					
+			</div>		
+		</div>	
+	</body>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../script/api.js"></script>
+	<script>
+var myArray = [
+["M13","累计运行次数","c4","00","00","00000000~99999999"],
+["M18","电梯当前位置显示","d3","00","00","00000000~99999999"],
+["M19","RUN-IN距离","d4","00","00","00000000~99999999"],
+["M20","V1减速距离","d5","00","00","00000000~99999999"],
+["M21","V2减速距离","d6","00","00","00000000~99999999"],
+["M22","V3减速距离","d7","00","00","00000000~99999999"],
+["M23","V2允许减速距离","ca","00","00","00000000~99999999"],
+["M24","V3允许减速距离","cb","00","00","00000000~99999999"],
+["M25","起动V2速度距离","cc","00","00","00000000~99999999"],
+["M26","起动V3速度距离","cd","00","00","00000000~99999999"],
+["M27","自学习层距离","d9","00","3f","00000000~99999999"],
+["M28","脉冲校正次数","0d","62","62","00000000~99999999"],
+["M29","脉冲误差最大值","0d","63","63","00000000~99999999"],
+["M35","控制器输入监控","79","00","00",""],
+["M36","控制器输出监控","7d","00","00",""],
+["M37","扩展板监控1","7b","00","00",""],
+["M37","扩展板监控2","7a","00","00",""],
+["M37","扩展板监控3","7e","00","00",""],
+];	
+		apiready = function (){
+			for (i=0;i<myArray.length;i++){
+					var html = "<li onclick='this_ble("+i+")'>" 
+							+ "<span>" + myArray[i][0] + "</span>" + "<span>" +myArray[i][1]+ "</span>" + "</li>";
+					var list = document.getElementById('createList');
+					var div = document.createElement('ul');
+					div.innerHTML += html;
+					list.appendChild(div);
+				}
+		}
+		
+		function this_ble(str){
+			var sendStr=myArray[str];
+			//console.log("open dailog"+sendStr);
+			api.openWin({
+				name : "ble_dailog28",
+				url : 'ble_dailog28.html',
+				pageParam : {
+					arrStr:sendStr
+				},
+				bounces : false,
+				opaque : false,
+				bgColor : 'rgba(255,255,255,1)',
+				vScrollBarEnabled : false,
+				hScrollBarEnabled : true,
+				reload : true,
+			});
+		}
+	</script>	
+</html>

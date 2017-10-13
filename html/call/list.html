@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Hello</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<script src="../../js/jquery-2.2.4.js"></script>
+		<link rel="stylesheet" href="../../css/header.css" />
+		<script src="../../js/common.js"></script>
+		<style>
+			.title {
+				margin: 20px 15px 10px;
+				color: #6d6d72;
+				font-size: 15px;
+			}
+		</style>
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-icon mui-icon-left-nav mui-pull-left" tapmode ="clickChange" onclick="goback()"></a>
+			<h1 class="mui-title" id="father">救援单列表</h1>
+		</header>
+	<script>
+		apiready = function() {
+			api.openFrame({
+				name : 'listBody',
+				url : 'listBody.html',
+				rect : {
+					x : 0,
+					y : 60,
+					w : 'auto',
+					h : api.frameHeight - 60
+				},
+				pageParam : {
+					//prolist : prolist
+				},
+				bounces : true,
+				opaque : false,
+				bgColor : 'rgba(239,239,244,1)',
+				vScrollBarEnabled : true,
+				hScrollBarEnabled : true
+			});
+		}
+	</script>
+</html>

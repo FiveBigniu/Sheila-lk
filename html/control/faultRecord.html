@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Hello</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/header.css" />
+		<script src="../../js/common.js"></script>
+		<script src="../../js/vue.min.js"></script>
+		<script src="../../js/jquery-2.2.4.js"></script>
+		<style>
+			.mui-table h4, .mui-table h5, .mui-table .mui-h5, .mui-table .mui-h6, .mui-table p {
+				margin-top: 0;
+			}
+			.mui-table h4 {
+				line-height: 21px;
+				font-weight: 500;
+			}
+			.mui-table .oa-icon {
+				position: absolute;
+				right: 0;
+				bottom: 0;
+			}
+			.mui-table .oa-icon-star-filled {
+				color: #f14e41;
+			}
+			.mui-col-xs-10 {
+				width: 70%;
+			}
+			.mui-col-xs-2 {
+				width: 30%;
+			}
+		</style>
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-icon mui-icon-left-nav mui-pull-left" tapmode ="clickChange" onclick="goback()"></a>
+			<h1 class="mui-title" id="father">故障记录</h1>
+		</header>
+		<div class="mui-content">
+			<ul class="mui-table-view mui-table-view-striped mui-table-view-condensed" id="list"></ul>
+		</div>
+		<script type="text/html" id="lineList">
+			{{each list as value i}}
+			<li class="mui-table-view-cell" id="{{value.id}}">
+				 <div class="mui-table">
+			          <a class="">
+				          <div class="mui-table-cell mui-col-xs-10">
+				               <h4 class="mui-ellipsis">{{value.elevatorName}}</h4>
+				               <span class="mui-h5">{{value.elevatorCode | shopDetail4}}</span>
+				               <h5>{{value.faultType | shopDetail}}</h5>
+				               <h5>{{value.propertyUint | shopDetail1}}</h5>
+				               <h5>{{value.userName | shopDetail2}} <span> {{value.dealMethod | shopDetail3}}</span> </h5>
+				          </div>
+					  </a>
+			     </div>
+		     </li>
+			{{/each}}
+		</script>
+	</body>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../js/template.js"></script>
+	<script src="../../script/api.js"></script>
+	<script>
+		apiready = function() {
+			getShopList();
+			//deviceId=api['pageParam']['deviceId'];
+			//console.log(deviceId);
+		}
+		//从网络地址获取数据
+		function getShopList() {
+			var token = $api.getStorage("token");
+			var tokenThis = "Token " + token.replace(/\"/g, "");
+			$.ajax({
+				url : $api.getStorage("homeUrl")+"/api/v1/elevator/fault",
+				headers : {
+					Authorization : tokenThis
+				},
+				type : "get",
+				success : function(data) {
+					//console.log(JSON.stringify(data));
+					if (data.list.length == 0) {
+						//textGetLa(dataaa);
+						api.toast({
+							msg : '没有信息'
+						});
+					} else {
+						for(i=0;i<data.list.length;i++){
+							if(data.list[i].dealMethod==0){
+								data.list[i].dealMethod="撤销";
+							}else if(data.list[i].dealMethod==1){
+								data.list[i].dealMethod="救援";
+							}else{
+								data.list[i].dealMethod="屏蔽";
+							}
+			    		}
+						textGetLa(data);
+					}
+				},
+				error : function() {
+					api.toast({
+						msg : '获取失败'
+					});
+				}
+			});
+		}
+
+		function textGetLa(json) {
+			template.helper("shopDetail", function(json) {
+				return "故障类型:" + json;
+			})
+			template.helper("shopDetail1", function(json) {
+				return "物业单位:" + json;
+			})
+			template.helper("shopDetail2", function(json) {
+				return "处理的用户名:" + json;
+			})
+			template.helper("shopDetail3", function(json) {
+				return "处理方式:" + json;
+			})
+			template.helper("shopDetail4", function(json) {
+				return "电梯编码:" + json;
+			})
+			var shopList = document.getElementById("list");
+			var content = template("lineList", json);
+			shopList.innerHTML = content;
+		}
+	</script>
+</html>

@@ -1,0 +1,45 @@
+/* 各网页公共部分 */
+/* 设置头部颜色及高度 */
+header {
+	background-color: #3c2a5b !important;
+}
+html, body, ul, li {
+	list-style: none !important;
+}
+header h1, header a {
+	color: white !important;
+	/* color: green;
+	 font-size: 10em;
+	 background-image: -webkit-gradient(linear, 0 0, 0 bottom, from(rgba(0, 128, 0, 1)), to(rgba(255, 255, 255, 1)));
+	 -webkit-background-clip: text;
+	 -webkit-text-fill-color: transparent; 字体渐变方法*/
+}
+/* 列表间隔 */
+.marginCard {
+	margin: 8px;
+	background-color: white;
+}
+/* 头部的距离 */
+.mui-bar {
+	height: 60px !important;
+}
+.mui-bar h1 {
+	line-height: 75px;
+	z-index: -9999;
+}
+.mui-bar-nav.mui-bar .mui-icon {
+	padding-top: 24px;
+}
+.mui-bar-nav~
+.mui-content {
+	padding-top: 60px !important;
+}
+/* 公共点击效果 */
+.clickChange {
+	background-color: rgba(255,255,255,0.6);
+}
+/* header返回键占的宽度*/
+.mui-bar-nav.mui-bar .mui-icon{
+	padding-left:20px !important;
+	padding-right:20px !important;
+}

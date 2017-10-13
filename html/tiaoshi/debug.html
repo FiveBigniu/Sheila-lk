@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>yhyun</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/header.css"/>
+		<link rel="stylesheet" href="../../css/bootstrap.min.css"/>
+		<!--<link rel="stylesheet" href="../../css/qikoo.css"/>-->
+		<script src="../../js/jquery-2.2.4.js"></script>
+		<script src="../../js/bootstrap.min.js"></script>
+		<!--<script src="../../js/qikoo.js"></script>-->
+	</head>
+	<style>
+		.mui-grid-view.mui-grid-9 {
+			background-color: rgba(255,255,255,0);
+		}
+		ul {
+			padding: 0;
+			margin: 0
+		}
+		ul li {
+			padding: 10px 0;
+			border: 1px solid #d6d6d6;
+			font-size: 20px;
+		}
+		.leftList {
+			width: 18%;
+			text-align: center;
+			float: left;
+			overflow-y:auto;
+			position:fixed;
+			margin-right:15px;
+		}
+		.leftList ul{
+			height:1125px;
+		}
+		.leftList li, .rightList li{
+			margin :5px 0;
+			border-radius:8px;
+			background-color:#f9f9f9;
+		}
+		.rightList {
+			margin-left:20%;
+			width: 80%;
+			text-align: center;
+			float: right;
+			overflow-y: auto;
+		}
+		.rightList ul li:active{
+			background-color:#a2a2a2;
+		}
+		span {
+			display: inline-block;
+			width: 80px;
+		}
+		.mui-popup-inner p{
+			color:#000000;
+		}
+		.modal-dialog{
+			margin:120px auto !important;
+			width:220px !important;
+		}
+		.modal-content{
+			box-shadow:none !important;
+		}
+		.modal-footer{
+			border:0 !important;
+		}
+	</style>
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-icon mui-icon-left-nav mui-pull-left" onclick="goback()" tapmode ="clickChange"></a>
+			<h1 class="mui-title" id="titleName">600系统调试</h1>
+			<!--<a class="mui-icon mui-pull-right" style="font-size: 17px;margin-top: 4px;" tapmode ="clickChange" onclick="SendBluetooth('F5520401A2')">刷新</a>-->
+		</header>
+		<div class="mui-content" style="background-color:white;" id="list_html">
+			<div style="height: 140px;width: 100%;"></div>
+			<div class="leftList" id="leftList">
+				<ul>
+					<li id="left_00" onclick="group_check(this)">
+						F0
+					</li>
+					<li id="left_01" onclick="group_check(this)">
+						F1
+					</li>
+					<li id="left_02" onclick="group_check(this)">
+						F2
+					</li>
+					<li id="left_03" onclick="group_check(this)">
+						F3
+					</li>
+					<li id="left_04" onclick="group_check(this)">
+						F4
+					</li>
+					<li id="left_05" onclick="group_check(this)">
+						F5
+					</li>
+					<li id="left_06" onclick="group_check(this)">
+						F6
+					</li>
+					<li id="left_07" onclick="group_check(this)">
+						F7
+					</li>
+					<li id="left_08" onclick="group_check(this)">
+						F8
+					</li>
+					<li id="left_09" onclick="group_check(this)">
+						F9
+					</li>
+					<li id="left_10" onclick="group_check(this)">
+						FA
+					</li>
+					<li id="left_11" onclick="group_check(this)">
+						FB
+					</li>
+					<li id="left_12" onclick="group_check(this)">
+						FC
+					</li>
+					<li id="left_13" onclick="group_check(this)">
+						FD
+					</li>
+					<li id="left_14" onclick="group_check(this)">
+						FE
+					</li>
+					<li id="left_15" onclick="group_check(this)">
+						FF
+					</li>				
+				</ul>
+			</div>
+			<div class="rightList" id="rightList">
+				<ul></ul>
+			</div>
+		</div>
+	</body>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../script/api.js"></script>
+	<script>
+		var ble_array = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "0a", "0b", "0c", "0d", "0e", "0f"];
+		var group = 4;//第几组 和ble_array对应关系
+		//浮动 固定刷新的十六个
+		var selectItem = null;
+		var bIsPut = false;
+		//var currentArray = [ble_array[group]+"00","0451","0456","0457","0F00","0F01","0F02","0F03","0F04","0F05","0F06","0F07","0F08","0F14","0F15","0F16","0F17","0F18","0F19"];
+		//var currentArray = [ble_array[group]+"00","0433","0438","0439","0F00","0F01","0F02","0F03","0F04","0F05","0F06","0F07","0F08","0F0e","0F0f","0F10","0F11","0F12","0F13"];		
+		  var currentArray = [ble_array[group]+"00","0433","0438","002D","0F00","0F01","0F02","0F05","0F08"];		
+
+		var winHeight;
+		//选择哪组 的对应数据
+
+		var dispLines;//滑动更新 暂停使用
+		var offsetLines = 1;
+		var scrollHeight=0;
+		
+		var enterflag=0;
+		var fristEnter = 0;//是否第一次收到蓝牙数据
+		var gobackFlag = 0;//第几次点返回
+		var index_ble;
+		var setTime;
+		
+		var currentGroup = "";
+		
+		var interval;
+		
+		var i = 0;
+		apiready = function() {
+			api.openFrame({
+			    name: 'floatDebug',
+			    url: 'floatDebug.html',
+			    rect: {
+			        x: 0,
+			        y: 60,
+			        w: 'auto',
+			        h: '140'
+			    },
+			    pageParam: {
+			        bgColor: '#000000'
+			    }
+			});
+			var systemType = api.systemType;
+			if(systemType=='ios'){
+				alert("ios暂不支持蓝牙调试")
+			}else{
+			
+				winHeight = api.winHeight - 60;
+				dispLines = Math.ceil(winHeight / 55);
+				
+				notify();//此页面收 蓝牙数据
+				
+				SendBluetooth("F552"+currentArray[0]+"F2");//发送蓝牙
+				
+				//setInterval("SendBluetooth('F5520f12ba')",2000);
+				
+				document.getElementById("leftList").style.height = winHeight + "px";
+				exitApp();
+				document.getElementById("left_"+ble_array[group]).style.backgroundColor="gray";
+			}
+		}
+				
+		function SendBluetooth(str) {
+			var ble = api.require('hwBluetooth');
+			ble.SendBluetooth({
+				sData : str
+			}, function(ret) {
+					console.log(JSON.stringify(ret));
+				});
+				
+		}	
+//		function notify(){
+//			var ble = api.require('hwBluetooth');
+//			ble.NotifyBluetooth(function(ret) {
+//				console.log(JSON.stringify(ret));
+//			});
+//		}			
+		function notify(){
+			var ble = api.require('hwBluetooth');
+			ble.NotifyBluetooth(function(ret) {
+				console.log(JSON.stringify(ret));
+				
+				var strMsg = ret.sData+"";
+				var strStr = strMsg.slice(0, 28);
+				var ary = strMsg.slice(2,4);
+				if (ret.state=="Recv"&&ary == "52") {
+					var isTrue = ble_calcSum(strStr);
+					//异或校验
+					if (fristEnter == 0) {
+						//console.log("*********"+isTrue+"-"+strMsg.slice(4,6)+"-"+group);
+						if (isTrue == true && strMsg.slice(4,6) == ble_array[group]) {
+							//console.log("****first*****"+isTrue+"-"+strMsg.slice(4,6)+"-"+group+"-"+ble_array[group]);
+							createList(strMsg);
+							fristEnter = 1;
+							enterflag = 0;
+						} else {
+							//console.log("----falseLoop----");
+							clearTimeout(setTime);
+							ble_write(currentArray[0]+"00");
+						}
+					} else if (fristEnter == 1) {
+							
+							var point =parseInt(strStr.substr(22,1),16);
+							var showNum ="00"+parseInt(strStr.substr(6,2),16);
+							var this_num = strStr.substr(4,2)+""+showNum.slice(-2);
+							
+							//console.log("00000000000000000000000"+isTrue+"/"+enterflag+"/"+this_num+"/"+currentGroup);
+						if(isTrue == true && enterflag == 0 && strMsg.slice(4,8) == currentGroup){
+							
+							children_send2(strStr);				
+						}
+						if (isTrue == true&&enterflag==0) {
+							//console.log("----trueLoop222----");
+							var context = ble_strToNum_enter(strStr.substr(8,2)+""+strStr.substr(10,2),point);
+							//console.log("------------"+context);
+							children_send(this_num,context);
+							
+							return strStr;
+						}
+					}
+				} else if(ret.state=="Recv"&&ary == "57") {
+					//alert("写入成功");
+				}else{
+					if(fristEnter == 0){
+						
+						var str = "f552" + currentArray[0];
+						var res = 0;
+						for (var i = 0; i < str.length; i += 2) {
+							res ^=parseInt(str.substr(i, 2), 16);
+						}
+						var s ="00"+res.toString(16);
+						s = s.slice(-2);
+						
+						var add = str + s;
+						//console.log("??????????"+add);
+						
+						SendBluetooth(add);
+					}
+						
+				}
+			});
+		}
+		
+		//连接成功创建list
+		function createList(newary) {
+			var str_num = newary.slice(20,22);
+			var list_num = parseInt(str_num, 16);
+			
+			for ( i = 0; i < list_num; i++) {
+				var new_li = "<li id='id_" + i + "' onclick='this_ble("+i+")'>" 
+							+ "<span id='text_" + i + "'>"+ ble_array[group] + "</span>" + "<span id='num_" + i + "'>" + i + "</span>" + "</li>";
+				var list = document.getElementById('rightList');
+				var div = document.createElement('ul');
+				div.innerHTML += new_li;
+				list.appendChild(div);
+			}
+			
+			clearInterval(setTime);
+			refrensh_ble();
+		}
+		function stopInterval(){
+			clearInterval(setTime);
+			clearInterval(interval);
+		}	
+		function startInterval(){
+			interval = setInterval(function(){
+				ble_write(currentGroup);
+			},150);
+			setTime=setTimeout("refrensh_ble()", 10);
+			//clearInterval(interval);
+		}			
+		//刷新浮动窗口数据
+		function children_send(this_num,context){
+				var fun = 'fillContentMsg("'+this_num+'","'+context+'")';
+				
+				api.execScript({
+				    frameName:'floatDebug',
+				    script: fun
+				});
+		}
+		//刷新浮动窗口数据
+		function children_send2(strStr){
+				var fun = 'fillContentMsg("'+strStr+'")';
+				
+				api.execScript({
+				    frameName:'ble_dailog',
+				    script: fun
+				});
+		}		
+		//刷新浮动窗口 固定的数据
+		function refrensh_ble() {
+			if(enterflag == 0){
+				i++;
+
+				if(i>currentArray.length){
+					i = 0;
+					ble_write(currentArray[i]);
+				}
+				
+				ble_write(currentArray[i]);			
+			}else{
+				ble_write(currentArray[0]+"00");
+			}
+			setTime=setTimeout("refrensh_ble()", 10);
+		}		
+		//组的更改				
+		function group_check(index){
+			$("#"+index.id).css("backgroundColor","gray");
+			$("#"+index.id).siblings().css("backgroundColor","white");
+			group = index.id.slice(-2);
+			group = parseInt(group);
+			currentArray[0] = ble_array[group];
+			//console.log(group+"这是组啊 变了的组.................."+currentArray[0]);
+			$("#rightList").empty();
+			
+			enterflag=1
+			fristEnter=0;
+			i = 0;
+		}
+		
+		$(function(){ 
+			scrollHeight=0; 
+			$(document).bind("scroll",function () { getpositiony()}); 
+		});
+
+		//断开连接
+		function disConnectDevice() {
+			var ble = api.require('hwBluetooth');
+			ble.disConnectDevice(function(ret) {
+			});
+		}
+
+		//滚动条
+
+		function getpositiony(){
+			var pos=$(window).scrollTop();
+			if(pos!=scrollHeight) { 
+				scrollHeight=pos; 
+			}
+		}
+		
+		function this_ble(index){
+		
+			currentGroup ="00"+index.toString(16);//获取的 当前第几个转16进制
+			
+			currentGroup = ble_array[group]+""+currentGroup.slice(-2);
+			
+			backFlag = 0;
+			
+			selectItem = currentGroup;
+			
+			bIsPut = false;
+			
+			index_ble = index;
+			
+			var grounpName = ble_array[group] + "组  " + index_ble + "号  ";
+			
+			document.getElementById("titleName").innerHTML = grounpName;
+			
+			//console.log(currentArray+"+++++++++++++++++++++++++++++++++++++++++++++++888");
+			
+			openWindowPro(grounpName,index,ble_array[group]);
+			
+			clearInterval(interval);
+			
+			interval = setInterval(function(){
+				ble_write(currentGroup);
+			},150);
+			
+		}
+		
+		function openWindowPro(name,index,group) {
+
+			api.openFrame({
+				name : 'ble_dailog',
+				url : 'ble_dailog.html',
+				    rect: {
+				        x: 0,
+				        y: 100,
+				        w: 'auto',
+				        h: 'auto'
+				    },
+				pageParam : {
+					groupName:name,
+					index_ble:index,
+					group:group
+				}
+			})
+		
+		}	
+			
+		
+		//计算加起来 转十六
+		function ble_strToNum(newary) {
+			var strNum = newary[4] + newary[5];
+			var test = parseInt(strNum, 16);
+			return test;
+		}
+		
+		function ble_send(){
+			var	inputText=parseInt(document.getElementById("ble_text").value);
+				
+			var	inputTextTo="000"+inputText.toString(16);
+			 	inputTextTo=inputTextTo.slice(-4);
+			 	
+			var single ="00"+index_ble.toString(16);
+			
+			single = single.slice(-2);
+			
+			var str="f557"+ble_array[group]+single+inputTextTo;
+			
+			var res = 0;
+			for (var i = 0; i < str.length; i += 2) {
+				res ^=parseInt(str.substr(i, 2), 16);
+			}
+			var s ="00"+res.toString(16);
+			s = s.slice(-2);
+			
+			var add = str + s;
+			return SendBluetooth(add);
+		}
+		
+		//拼接+转十六
+		function ble_write(data) {
+			var str = "f552" + data;
+			var res = 0;
+			for (var i = 0; i < str.length; i += 2) {
+				res ^=parseInt(str.substr(i, 2), 16);
+			}
+			var s ="00"+res.toString(16);
+			s = s.slice(-2);
+			
+			var add = str + s;
+			//console.log("点了之后发送"+add);
+			return SendBluetooth(add);
+		}
+		
+		function ble_strToNum_enter(hexStr,point){
+			var strNum = hexStr;
+			var test = parseInt(strNum, 16)+"";
+				if(point>0)
+					test =test.slice(0,-point)+"."+test.slice(-point);
+			return test;
+		}
+		//
+		function ble_calcSum(str) {
+			var res = 0;
+			for (var i = 0; i < str.length-2; i+=2) {
+				res ^=parseInt(str.substr(i, 2), 16);
+			}
+			var s ="00"+res.toString(16);
+			s = s.slice(-2);
+			return str.substr(26, 2) == s;
+		}
+
+		var backFlag = 0;
+		function exitApp(){
+			api.addEventListener({
+				name:'keyback'
+			}, function(ret,err){
+				backFunc();
+			})
+		}
+
+		function backFunc(){
+				if(backFlag == 0){
+					backFlag = 1;
+					api.closeFrame({
+					    name: 'ble_dailog'
+					});
+					document.getElementById("titleName").innerHTML = "600系统调试";
+					clearInterval(interval);				
+				}else{
+				  var r=confirm("确定断开蓝牙？");
+				  if (r==true){
+				    	disConnectDevice();
+						setTimeout("api.closeWin()",500);
+				    }				
+				}
+		}
+
+		function goback() {
+				backFunc();
+		}
+	
+	</script>
+</html>

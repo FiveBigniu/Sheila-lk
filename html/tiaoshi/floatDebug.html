@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/header.css"/>
+	<style>
+		html, body{
+			background-color:white;
+		}
+		.floatContent{
+			width:100%;
+			height:113px;
+			background-color:#d8d8d8;
+			/*margin-top:75px;*/
+			border-radius:20px;
+			padding:10px;
+			box-sizing:border-box;
+			border:1px solid #676767;
+			font-size:12px;
+			line-height:20px;
+		}
+		.leftSide, .rightSide{
+			background-color:white;
+			width:48%;
+			padding:4px;
+			box-sizing:border-box;
+			border:1px solid #676767;
+			text-align:center;
+		}
+		.leftSide{
+			float:left;
+		}
+		.leftSide label, .rightSide label{
+			display:block;
+			float:left;
+			width:60%;
+		}
+		.leftSide span, .rightSide span{
+			display:block;
+			float:left;
+			width:40%;
+		}
+		.rightSide{
+			float:right;
+		}
+		.leftSide div, .rightSide div{
+			height:20px;
+			border-bottom:1px solid #CCCCCC;
+			clear:both;
+		}
+		.content{
+			padding:15px 18px 0px 18px;
+		}
+
+	</style>
+</head>
+<body>
+<!--		<header class="mui-bar mui-bar-nav">
+			<a class="mui-icon mui-icon-left-nav mui-pull-left" onclick="goback()" tapmode ="clickChange"></a>
+			<h1 class="mui-title">600系统调试</h1>
+		</header>-->
+		<div class="content">
+	<div class="floatContent">
+		<div class="leftSide">
+			<div>
+				<!--<span>F4-51</span>-->
+				<label>实际速度:</label>
+				<span id="num_0451"></span>			
+			</div>
+			<div>
+				<!--<span>F4-56</span>-->
+				<label>当前楼层:</label>
+				<span id="num_0456"></span>			
+			</div>
+			<div>
+				<!--<span>F4-57</span>-->
+				<label>当前位置:</label>
+				<span id="num_0045"></span>			
+			</div>
+	
+<!--			<div>
+				
+				<label>电机功率:</label>
+				<span id="num_0f03"></span>			
+			</div>-->		
+<!--			<div>
+				
+				<label>输入电压:</label>
+				<span id="num_0f04"></span>			
+			</div>	-->
+			<div>
+				
+				<label>母线电压:</label>
+				<span id="num_0f05"></span>			
+			</div>				
+		</div>
+		<div class="rightSide">
+			<div>
+				<!--<span>FF-00</span>-->
+				<label>电机电流:</label>
+				<span id="num_0f00"></span>			
+			</div>
+			<div>
+				<!--<span>FF-01</span>-->
+				<label>电机电压:</label>
+				<span id="num_0f01"></span>			
+			</div>
+			<div>
+				<!--<span>FF-02</span>-->
+				<label>电机频率:</label>
+				<span id="num_0f02"></span>			
+			</div>			
+<!--			<div>
+				
+				<label>回馈电流:</label>
+				<span id="num_0f06"></span>			
+			</div>
+			<div>
+				
+				<label>回馈电压:</label>
+				<span id="num_0f07"></span>			
+			</div>-->
+			<div>
+				
+				<label>磁角误差:</label>
+				<span id="num_0f08"></span>			
+			</div>
+<!--			<div>
+				
+				<label>C相幅值:</label>
+				<span id="num_0f14"></span>			
+			</div>
+			<div>
+				
+				<label>D相幅值:</label>
+				<span id="num_0f15"></span>			
+			</div>
+			<div>
+				
+				<label>C相最大:</label>
+				<span id="num_0f16"></span>			
+			</div>
+			<div>
+				
+				<label>C相最小:</label>
+				<span id="num_0f17"></span>			
+			</div>
+			<div>
+			
+				<label>D相最大:</label>
+				<span id="num_0f18"></span>			
+			</div>
+			<div>
+				
+				<label>D相最小:</label>
+				<span id="num_0f19"></span>			
+			</div>	-->								
+		</div>		
+	</div>
+	</div>
+</body>
+<script>
+function fillContentMsg(this_num,context){
+	//console.log(this_num+"//"+context+"//////////////////////////////");
+	if(document.getElementById("num_" + this_num)){
+		document.getElementById("num_" + this_num).innerText = context;
+	}
+}
+</script>
+</html>

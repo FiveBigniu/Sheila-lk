@@ -1,0 +1,92 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../../css/header.css" rel="stylesheet"/>
+		<script src="../../../js/common.js"></script>
+		<script src="../../../js/jquery-2.2.4.js"></script>
+	</head>
+	<style>
+	body,
+	html,
+	.mui-content{
+		height: 100%;
+	}
+		body{
+			background-color: white;
+		}
+		p{
+			text-align: center;
+		}
+		.js-signature{
+			height: 465px;
+			text-align: center;
+		}
+		.mui-bar {
+	/* background-color:#007aff; */
+	height: 60px;
+}
+.mui-bar h1 {
+	line-height: 75px;
+}
+.mui-bar-nav.mui-bar .mui-icon {
+	padding-top: 24px;
+}
+.mui-bar-nav~
+.mui-content {
+	padding-top: 60px;
+}
+	</style>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-icon mui-icon-left-nav mui-pull-left" tapmode ="clickChange" onclick="goback()"></a>
+			<h1 class="mui-title">户主签名</h1>
+		</header>
+		<div class="mui-content">
+		<div class="row" style="margin: 10px;">
+					<div class="js-signature" data-line-color="#bc0000"></div>
+					<p><button id="clearBtn" class="btn btn-default" onclick="clearCanvas();">清除</button>&nbsp;
+						<button id="saveBtn" class="btn btn-default" onclick="saveSignature();">保存</button>
+					</p>
+					<!--<div id="signature">
+						<p><em>签名预览</em></p>
+					</div-->
+		</div>
+		</div>
+		<script src="../../../js/mui.min.js"></script>
+		<script src="../../../js/jq-signature.js"></script>
+		<script type="text/javascript">
+
+		$(document).on('ready', function() {
+			if($('.js-signature').length) {
+				$('.js-signature').jqSignature();
+			}
+			$('#saveBtn').attr('disabled', true);
+		});
+		$('.js-signature').eq(0).on('jq.signature.changed', function() {
+			$('#saveBtn').attr('disabled', false);
+		});
+		function clearCanvas() {
+			$('#signature').html('<p><em>清除</em></p>');
+			$('.js-signature').eq(0).jqSignature('clearCanvas');
+			$('#saveBtn').attr('disabled', true);
+		}
+		function saveSignature() {
+			$('#signature').empty();
+			var dataUrl = $('.js-signature').eq(0).jqSignature('getDataURL');
+			var funo = 'oSignFc("'+dataUrl+'")';
+				api.execScript({
+				    name: 'list_changepro',
+				    script: funo
+				});
+			goback();
+		}
+		</script>
+	</body>
+
+</html>

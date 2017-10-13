@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Hello</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link href="../../css/header.css" rel="stylesheet"/>
+		<script src="../../js/common.js"></script>
+		<script src="../../js/jquery-2.2.4.js"></script>
+		<style>
+			.mui-badge {
+				margin-top: 8px;
+			}
+			.mui-card-header.mui-card-media .mui-media-body {
+				margin-left: 30px;
+			}
+			.mui-card-content {
+				padding-top: 10px;
+			}
+			.mui-media-body div {
+				font-size: 16px;
+			}
+			.dailog_type{
+				height:154px;
+				width:100%;
+				background-color:#EEEEEE;
+				border:1px solid gray;
+				text-align:center;
+				background-color:#3c2a5b;
+			}
+			.dailog_type p{
+				line-height:50px;
+				margin-bottom:0 !important;
+				color:white;
+				font-size:18px;
+				font-family:"微软雅黑";
+			}
+			.mui-popup-inner{
+				padding:0;
+			}
+			.mui-popup-button{
+				background-color:#BBBBBB;
+				color:white;
+				font-family:"微软雅黑";
+			}
+			.closeActive:active{
+				background-color:#666666;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="mui-content">
+
+			<ul class="mui-table-view" id="list">
+				
+			</ul>
+			<div class="mui-popup mui-popup-in showDailog" style="display:none;">
+				<div class="mui-popup-inner">
+					<div class="dailog_type" id="dailog_type">
+						<p id="A0" onclick="openDeal(this,event);" tapmode="clickChange" style="border-bottom:1px solid gray;">半月</p>
+						<p id="B0" onclick="openDeal(this,event);" tapmode="clickChange" style="border-bottom:1px solid gray;">季度</p>
+						<p id="C0" onclick="openDeal(this,event);" tapmode="clickChange">半年</p>
+					</div>
+				</div>
+				<div class="mui-popup-buttons" tapmode="clickChange">
+					<span class="mui-popup-button closeActive" onclick="closeDailog()">关闭</span>
+				</div>
+			</div>
+			<div class="mui-popup-backdrop mui-active showChange" style="display: none;"></div>			
+		</div>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/template.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../script/api.js"></script>
+	</body>
+	<script>
+		var startIndex=0;
+		var pageSize=15;
+		var showMsg="数据加载成功";
+		var flagRefrensh=0;
+		var deviceid;
+		apiready = function() {
+			getShopList();
+			setRefreshHeader();
+			api.showProgress({
+			    style: 'default',
+			    animationType: 'fade',
+			    title: '努力加载中...',
+			   // text: '先喝杯茶...',
+			    modal: true
+			});
+			refrensh();
+		}
+		function setRefreshHeader(){
+			api.setRefreshHeaderInfo({
+			    visible: true,
+			    loadingImg: 'widget://image/refresh.png',
+			    bgColor: '#f4f9ff',
+			    textColor: 'rgba(105, 105, 105, 1.0)',
+			    textDown: '下拉刷新...',
+			    textUp: '释放刷新...',
+			    showTime: true
+			}, function(ret, err) {
+				location.reload();
+			    //在这里从服务器加载数据，加载完成后调用api.refreshHeaderLoadDone()方法恢复组件到默认状态
+				api.refreshHeaderLoadDone();
+			});
+		}
+		
+		function getShopList() {
+			var token = $api.getStorage("token");
+			var tokenThis = "Token "+token.replace(/\"/g, "");
+			$.ajax({
+				url : $api.getStorage("homeUrl")+"/api/v1/elevator/list",
+			    headers: {
+			        Authorization:tokenThis
+			    },
+			    data:{
+			    	startIndex:startIndex,
+			    	pageSize:pageSize
+			    },
+			    type: "get",
+			    timeout:8000,
+			    success: function (data) {
+			    	//console.log(JSON.stringify(data));
+			    	//console.log(data.list.length);
+			    	if(data.list.length!=15){
+			    		showMsg="没有更多了";
+			    	}
+			    	if(flagRefrensh!=0){
+					    api.toast({
+			                msg:showMsg
+		                });
+			    	}			    	
+			    	api.hideProgress();
+					addList(data);
+			    },
+			    error:function(){
+			    	api.hideProgress();
+			    	api.toast({
+	                    msg:'获取失败'
+                    });
+			    }
+			});
+		}
+		
+		function addList(data){
+			var div=document.createElement("div");
+			var list=document.getElementById("list");
+			for(i=0;i<data.list.length;i++){
+				var html= "<li class='mui-table-view-cell' id='"+data.list[i].deviceId+"' onclick='openView(this)'>"
+							+"<a class='mui-navigate-right'>"
+							+data.list[i].elevatorName
+							+"</a>"
+							+"</li>";
+				div.innerHTML+=html;
+				list.appendChild(div);
+				//console.log(data.list[i].elevatorName)			
+			}
+		}
+	
+		function openView(index){
+		
+				deviceid=index.id;
+				dt_name=$("#"+index.id).children("a").text();
+				$(".showDailog").css("display","block");
+				$(".showChange").css("display","block");			
+				//var thisOnclick=$("#"+index.id);
+				//thisOnclick.onclick=null;
+//				$(".mui-content").one("click",fucntion(){
+//					return false;
+//				})
+		}
+			
+		function closeDailog(){
+			$(".showDailog").css("display","none");
+			$(".showChange").css("display","none");
+		}
+//  $('#dailog_type p').bind("click",function(event){
+//  	$(this).attr("id");
+//  	console.log("888888");
+//  	console.log($(this).attr("id")+"888888");
+//      //event.stopPropagation();    //  阻止事件冒泡
+//  });	
+    	
+		function openDeal(index,event){
+			//console.log(JSON.stringify(deviceid));
+			
+			//$(".showDailog").css("display","none");
+			//$(".showChange").css("display","none");
+			//closeDailog();
+			api.openWin({
+							name : 'list_changepro',
+							url : 'list_changepro.html',
+							pageParam : {
+								deviceId:deviceid,
+								type:index.id,
+								dt_name:dt_name	
+							},
+							bounces : false,
+							opaque : false,
+							slidBackEnabled:false,
+							softInputMode:'resize',
+							bgColor : 'rgba(255,255,255,0)',
+							vScrollBarEnabled : false,
+							hScrollBarEnabled : true,
+						});		
+		}		
+		//返回
+		function goback() {
+			api.closeWin();
+		}
+		
+		function refrensh(){
+			api.addEventListener({
+			    name:'scrolltobottom',
+			    extra:{
+			        threshold:0            //设置距离底部多少距离时触发，默认值为0，数字类型
+			    }
+			},function(ret,err){
+				flagRefrensh=1;
+				startIndex=startIndex+pageSize;
+				getShopList();
+			});		
+		}	
+	</script>
+</html>

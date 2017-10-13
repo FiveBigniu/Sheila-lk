@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>yhyun</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/header.css"/>
+		<link rel="stylesheet" href="../../css/bootstrap.min.css"/>
+		<!--<link rel="stylesheet" href="../../css/qikoo.css"/>-->
+		<script src="../../js/jquery-2.2.4.js"></script>
+		<script src="../../js/common.js"></script>
+		<!--<script src="../../js/qikoo.js"></script>-->
+	</head>
+	<style>
+		.mui-grid-view.mui-grid-9 {
+			background-color: rgba(255,255,255,0);
+		}
+		ul {
+			padding: 10px 0;
+			margin: 0;
+			border: 0;
+		}
+		ul li {
+			padding: 25px 0;
+			border: 1px solid #d6d6d6;
+			font-size: 20px;
+			margin-top:10px;
+			border-radius:10px;
+			background-color:#f9f9f9;
+		}
+		.mui-table-view:after{
+			height:0;
+		}
+	</style>
+	<body style="background-color: white;">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-icon mui-icon-left-nav mui-pull-left" onclick="goback()" tapmode ="clickChange"></a>
+			<h1 class="mui-title">电梯调试</h1>
+			<a class="mui-icon mui-pull-right" style="font-size: 17px;margin-top: 6px;" tapmode ="clickChange" onclick="refrensh()">刷新</a>			
+		</header>
+		<div class="mui-content" style="background-color:white;" id="scan_html">
+			<div style="text-align: center;">
+				<img src="../../images/ld.gif" style="width:75%;height: auto;"/>
+			</div>
+			<p>
+				蓝牙列表
+			</p>
+			<ul id="list" class="mui-table-view mui-table-view-chevron"></ul>
+		</div>
+	</body>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../script/api.js"></script>
+	<script>
+		var openPage;
+		var lcType=0;
+		
+		apiready = function() {
+			var systemType = api.systemType;
+			openPage = api['pageParam']['name'];
+			if(openPage=="debug28"){
+				lcType=1;
+			}else{
+				lcType=0;
+			}
+			
+			if(systemType=='ios'){
+				alert("ios暂不支持蓝牙调试")
+			}else{
+				initble();
+				notify();
+				setTimeout("ScanBluetooth()",1500);
+			}
+		}
+		
+		function notify(){
+			var ble = api.require('hwBluetooth');
+			ble.NotifyBluetooth(function(ret) {
+	            //console.log(JSON.stringify(ret));
+	        });
+		}	
+			
+		//添加数据
+		function addhtml(obj) {
+			var name = obj.bleAddr;
+			//console.log(name+"test");
+			var html = "<li class='mui-table-view-cell' onclick=\"ConnectDevice('" + name + "')\">" + name + "</li>"
+			var list = document.getElementById('list');
+			var div = document.createElement('div');
+			div.innerHTML = html;
+			list.appendChild(div);
+		}
+
+		//初始化ble
+		function initble() {
+			var ble = api.require('hwBluetooth');
+			ble.initBluetooth({
+				SPP_UUID : '00001101-0000-1000-8000-00805F9B34FB',
+				btClass : '1f00',
+				iDeviceType :lcType
+			}, function(ret) {
+				//console.log(JSON.stringify(ret));
+			});
+		}
+
+		//扫描列表
+		function ScanBluetooth() {
+			var ble = api.require('hwBluetooth');
+			ble.ScanBluetooth(function(ret) {
+				//console.log(JSON.stringify(ret));
+				if (ret) {
+					if (ret.status == 2) {
+						addhtml(ret);
+					} else if (ret.status == 4) {
+						api.toast({
+							msg : '蓝牙断开'
+						});
+					}
+				} else {
+					api.toast({
+						msg : '出错了'
+					});
+				}
+			});
+		}
+		function refrensh(){
+			$("#list").empty();
+			ScanBluetooth();
+		}
+		//连接蓝牙
+		function ConnectDevice(text) {
+			api.showProgress({
+				style : 'default',
+				animationType : 'fade',
+				title : '连接中，请稍后...',
+				modal : true
+			});
+			var ble = api.require('hwBluetooth');
+			ble.ConnectDevice({
+				btAddr : text
+			}, function(ret) {
+				if (ret) {
+					if (ret.state == 0) {
+//						api.toast({
+//							msg : '蓝牙连接成功'
+//						});
+						//console.log(JSON.stringify(ret));
+						openWindowPro();
+						//SendBluetooth("F5520401A2");
+						api.hideProgress();
+					} else if (ret.state == 1 || ret.state == 2 || ret.state == 3) {
+						alert("连接失败，请重试！");
+						api.hideProgress();
+					} else {
+						api.toast({
+							msg : '连接断开'
+						});
+						api.hideProgress();
+					}
+				}
+			});
+		}
+						function openWindowPro() {
+							api.openWin({
+								name : openPage,
+								url : openPage+'.html',
+								pageParam : {},
+								bounces : false,
+								opaque : false,
+								bgColor : 'rgba(255,255,255,0)',
+								vScrollBarEnabled : false,
+								hScrollBarEnabled : true,
+							})
+						}		
+	</script>
+</html>

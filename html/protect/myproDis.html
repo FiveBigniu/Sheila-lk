@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Hello</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/header.css" />
+		<script src="../../js/common.js"></script>
+		<style>
+			.mui-checkbox p {
+				font-size: 12px;
+			}
+			.mui-table-view-cell > .mui-slider-right > .mui-btn {
+				padding: 0 10px;
+			}
+			.sign {
+				width: 100%;
+				padding: 10px 10px 10px 10px;
+			}
+			.discrip {
+				width: 50px;
+				height: 50px;
+				border: 1px solid #DDDDDD;
+				margin-bottom: 20px;
+			}
+			.mui-table-view-cell {
+				padding: 11px 5px;
+			}
+			.mui-table-view-cell:after {
+				left: 2px;
+			}
+			.sign:after {
+				position: absolute;
+				right: 0;
+				bottom: 0;
+				left: 2px;
+				height: 1px;
+				content: '';
+				-webkit-transform: scaleY(.5);
+				transform: scaleY(.5);
+				background-color: #c8c7cc;
+			}
+			textarea {
+				margin: 10px 0;
+			}
+			.oa-contact-cell.mui-table .mui-table-cell {
+				padding: 11px 0;
+				vertical-align: middle;
+			}
+			.oa-contact-cell {
+				position: relative;
+				margin: -11px 0;
+			}
+			.oa-contact-avatar {
+				width: 75px;
+			}
+			.oa-contact-avatar img {
+				border-radius: 50%;
+			}
+			.oa-contact-content {
+				width: 100%;
+			}
+			.oa-contact-name {
+				margin-right: 20px;
+			}
+			.oa-contact-name, oa-contact-position {
+				float: left;
+			}
+			.pic {
+				width: 80px;
+				height: 80px;
+				float: left;
+				margin: 10px 0 0 15px;
+			}
+		</style>
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-icon mui-icon-left-nav mui-pull-left" tapmode ="clickChange" onclick="goback()"></a>
+			<h1 id="title" class="mui-title">维保详情</h1>
+		</header>
+		<div class="mui-content" style="display:none;">
+			<div id="tabbar" class="mui-control-content mui-active">
+				<!--<p style="margin-top: 10px;">
+				向左滑动选择维保类型
+				</p>-->
+				<ul class="mui-table-view">
+					<li class="mui-table-view-cell" id="swipeChose" style="padding: 0 0 0 5px !important;"></li>
+				</ul>
+				<div id="hideBody">
+					<p style="margin-top: 10px;margin-left:10px;">
+						维保拍照
+					</p>
+					<ul class="mui-table-view">
+						<div class="sign" style="background-color: white;">
+							<!--<div class="discrip"></div>-->
+							<div style="width: 48%;display: inline-block;text-align: center;">
+								<img id="self" onclick="openBig(this)" src="../../images/no.jpg" style="width: 80px;height: 80px;margin-top:10px;"/>
+								<!--<div style="position: absolute;width: 80px;height: 80px;top: 20px;line-height: 80px;left:54px ">无</div>-->
+							</div>
+							<div style="width: 48%;display: inline-block;text-align: center">
+								<img id="other" onclick="openBig(this)" src="../../images/no.jpg" style="width: 80px;height: 80px;margin-top:10px;"/>
+								<!--<div style="position: absolute;width: 80px;height: 80px;top: 20px;line-height: 80px;right:63px ">无</div>-->
+							</div>
+						</div>
+						<!--<div style="float: left;width: 200px;"><img id="self" src="" style="width:80px;height: auto;"/></div>-->
+						<!--<div><img id="other" src="" style="width:80px;height: auto;"/></div>-->
+				</div>
+				</ul>
+				<p style="margin-top: 10px;margin-left:10px;" style="clear: both;">
+					维保签名和维保描述
+				</p>
+				<ul class="mui-table-view" id="scrollTop">
+					<div class="pic"><img onclick="openBig(this)" id="picOne" src="../../images/no.jpg" style="width: 80px;height: 90px;"/>
+					</div>
+					<div class="pic"><img onclick="openBig(this)" id="picTwo" src="../../images/no.jpg" style="width: 80px;height: 90px;"/>
+					</div>
+					<div class="mui-input-row" style="margin: 10px 5px;padding: 20px 5px;">
+						<label id="textArea" style="display: block;width: 90%;border: 1px solid #c0c0c0;display: none;">无</label>
+					</div>
+				</ul>
+				<!--<p>
+				提交后无法更改
+				</p>-->
+			</div>
+		</div>
+		<div class="mui-popup mui-popup-in showDailog" style="display: none;">
+				<div class="mui-popup-inner" style="width: 270px;height: 320px;border:1px solid gray;text-align: center">
+					<img id="showPicCont" src="" style="width: 240px;height: auto;"/>
+				</div>
+				<div class="mui-popup-buttons">
+					<span class="mui-popup-button" onclick="closeImg()">关闭</span>
+				</div>
+		</div>
+		<div class="mui-popup-backdrop mui-active showChange" style="display: none;"></div>		
+		<script type="text/html" id="default">
+			{{each lists as value i}}
+			<li class="mui-table-view-cell">
+				<div class="mui-slider-handle">
+					<div class="mui-table-cell">
+					<span style="word-break:break-all;">{{value.name}}</span>
+					<p>{{value.describe}}</p>
+					</div>
+				</div>
+			</li>
+			{{/each}}
+		</script>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../script/api.js"></script>
+		<script src="../../js/template.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../js/jquery-2.2.4.js"></script>
+		<script>
+			apiready = function() {
+				var lastList = api["pageParam"]["id"];
+				getMsg(lastList);
+				//var myItem = $api.getStorage('myPro');
+				api.showProgress({
+			    style: 'default',
+				    animationType: 'fade',
+				    title: '努力加载中...',
+				    modal: true
+				});
+			}
+			//获取数据
+			function getMsg(list) {
+				var linkenSever=$api.getStorage("linkenSever");
+				api.ajax({
+					url : "http://"+linkenSever+"/LinKenApp/ServiceContentApp",
+					method : 'post',
+					data : {
+						values : {
+							id : list
+						}
+					},
+					dataType : "json",
+					timeout : 1000,
+				}, function(ret, err) {
+				if(ret){
+					if (ret.result == '1') {
+							//console.log(JSON.stringify(ret));
+							textGet(ret);
+	//						api.toast({
+	//							msg : '数据拉取成功'
+	//						});
+						} else {
+							api.hideProgress();
+							api.toast({
+								msg : '更新数据失败'
+							});
+						}
+				}else{
+					api.toast({
+	                    msg:'网络错误'
+                    });
+				}
+					
+				});
+			}
+			//查看大图
+function openBig(thisPic){
+	var pic=document.getElementById(thisPic.id);
+	openSeePic(pic.src);
+//	if(sSign!=""&&thisPic=='sSign'){
+//		//console.log(pic.src);
+//		openSeePic(sSign);
+//	}
+//	if(picOne!=""&&thisPic=='picOne'){
+//		openSeePic(picOne);
+//	}
+//	if(picTwo!=""&&thisPic=='picTwo'){
+//		openSeePic(picTwo);
+//	}
+//	if(oSign!=""&&thisPic=='oSign'){
+//		openSeePic(sSign);
+//	}
+	
+}
+function openSeePic(img){
+		document.getElementById("showPicCont").src=img;
+		$api.css($api.dom(".showDailog"),'display:block');
+		$api.css($api.dom(".showChange"),'display:block');
+}
+function closeImg(){
+		$api.css($api.dom(".showDailog"),'display:none');
+		$api.css($api.dom(".showChange"),'display:none');
+}
+
+			//把数据填入模板
+			function textGet(info) {
+					var list = document.getElementById("swipeChose");
+					var content = template("default", info);
+					list.innerHTML = content;
+					
+					document.getElementById("hideBody").style.display = "block";
+					if (info.sSign!= null) {
+						//console.log(info.sSign);
+						$api.byId('self').src = info.sSign;
+					} 
+					 if (info.oSign != null) {
+						$api.byId('other').src = info.oSign;
+					} 
+					 if (info.picOne != null) {
+						$api.byId('picOne').src = info.picOne;
+					} 
+					 if (info.picTwo != null) {
+						$api.byId('picTwo').src = info.picTwo;
+					} 
+					 if (info.textArea != null) {
+						document.getElementById('textArea').style.display = "block";
+						document.getElementById('textArea').innerText = info.textArea;
+					}
+					api.hideProgress();
+					$api.css($api.dom('.mui-content'),'display:block');
+			}
+
+			function goback() {
+				api.closeWin();
+			}
+		</script>
+	</body>
+</html>
